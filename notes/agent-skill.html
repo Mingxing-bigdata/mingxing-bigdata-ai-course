@@ -3,302 +3,421 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agent Skill 一分钟速览 · 大数据与人工智能课程</title>
+<title>从零掌握 Agent Skill · 分层自测版</title>
 <style>
   :root{
-    --bg:#f6f7fb; --card:#ffffff; --ink:#1f2430; --sub:#5b6472;
-    --brand1:#4f46e5; --brand2:#9333ea; --accent:#0ea5e9;
-    --ok:#10b981; --line:#e6e8f0; --chip:#eef0ff;
+    --bg:#f4f5fb; --card:#ffffff; --ink:#1b2130; --sub:#5d6678;
+    --l1:#0ea5e9; --l2:#8b5cf6; --l3:#f59e0b;
+    --ok:#10b981; --bad:#ef4444; --line:#e5e8f2; --chip:#eef1ff;
   }
-  *{box-sizing:border-box; margin:0; padding:0;}
+  *{box-sizing:border-box;margin:0;padding:0}
   body{
     font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
-    background:linear-gradient(160deg,#eef1ff 0%,var(--bg) 40%);
-    color:var(--ink); line-height:1.7; padding:28px 16px 60px;
+    background:linear-gradient(165deg,#eaeefc 0%,var(--bg) 45%);
+    color:var(--ink); line-height:1.75; padding:26px 14px 70px;
   }
-  .wrap{max-width:880px; margin:0 auto;}
-  header{
-    text-align:center; padding:18px 10px 6px;
-  }
-  .kicker{
-    display:inline-flex; align-items:center; gap:8px;
-    background:var(--chip); color:var(--brand1); font-weight:600;
-    padding:6px 14px; border-radius:999px; font-size:13px; letter-spacing:.5px;
-  }
-  h1{font-size:34px; margin:14px 0 4px; letter-spacing:.5px;}
-  h1 .grad{
-    background:linear-gradient(90deg,var(--brand1),var(--brand2),var(--accent));
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-  }
-  .sub{color:var(--sub); font-size:15px;}
-  .timer{
-    display:inline-block; margin-top:14px; font-size:14px; font-weight:700;
-    color:#fff; background:linear-gradient(90deg,var(--brand1),var(--brand2));
-    padding:8px 18px; border-radius:10px; box-shadow:0 6px 18px rgba(79,70,229,.25);
-  }
-  .grid{display:grid; gap:16px; margin-top:26px;}
-  .card{
-    background:var(--card); border:1px solid var(--line); border-radius:16px;
-    padding:20px 22px; box-shadow:0 4px 14px rgba(31,36,48,.05);
-  }
-  .card h2{
-    font-size:17px; display:flex; align-items:center; gap:9px;
-    color:var(--brand1); margin-bottom:10px;
-  }
-  .card h2 .num{
-    background:linear-gradient(135deg,var(--brand1),var(--brand2)); color:#fff;
-    width:24px; height:24px; border-radius:7px; font-size:13px;
-    display:inline-flex; align-items:center; justify-content:center; flex:none;
-  }
-  .def{
-    font-size:17px; font-weight:600; margin-bottom:10px;
-    background:linear-gradient(135deg,#f5f3ff,#eef6ff);
-    border-left:4px solid var(--brand1); padding:12px 16px; border-radius:0 10px 10px 0;
-  }
-  .grid-2{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:12px;}
-  .mini{
-    background:#fafbff; border:1px dashed var(--line); border-radius:12px; padding:12px 14px;
-  }
-  .mini b{color:var(--brand1); display:block; font-size:14px; margin-bottom:4px;}
-  .mini span{font-size:13.5px; color:var(--sub);}
-  code{
-    background:#eef0f8; border-radius:5px; padding:1px 7px;
-    font-family:Consolas,"Courier New",monospace; font-size:.92em; color:#4f46e5;
-  }
-  .flow{display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center; margin-top:6px;}
-  .step{
-    background:var(--card); border:1.5px solid var(--line); border-radius:12px;
-    padding:8px 14px; font-size:13.5px; font-weight:600; text-align:center;
-  }
-  .step i{display:block; font-style:normal; color:var(--sub); font-weight:400; font-size:12px;}
-  .arrow{color:var(--brand2); font-weight:700;}
-  .tag{
-    display:inline-block; background:var(--chip); color:var(--brand1);
-    font-size:12px; font-weight:600; border-radius:6px; padding:2px 9px; margin:2px 2px 2px 0;
-  }
-  .memory{
-    background:linear-gradient(120deg,#fff7ed,#fef2f2);
-    border:1px solid #fed7aa; border-radius:16px; padding:20px 22px;
-  }
-  .memory h2{color:#ea580c;}
-  .memory ol{margin-left:20px; font-size:15px;}
-  .memory ol li{margin:8px 0;}
-  .memory b{color:#c2410c;}
-  /* quiz */
-  .q{border:1px solid var(--line); border-radius:14px; padding:16px 18px; margin-bottom:14px; background:#fcfcff;}
-  .q .qt{font-weight:700; font-size:15px; margin-bottom:4px;}
-  .q .qmeta{font-size:12px; color:var(--accent); font-weight:600;}
-  .opts{display:grid; gap:8px; margin:12px 0 10px;}
-  .opt{
-    border:1.5px solid var(--line); background:#fff; border-radius:10px;
-    padding:8px 14px; cursor:pointer; font-size:14px; transition:.15s; text-align:left;
-  }
-  .opt:hover{border-color:var(--brand1); background:#f4f5ff;}
-  .opt.right{border-color:var(--ok); background:#ecfdf5; font-weight:700;}
-  .opt.wrong{border-color:#ef4444; background:#fef2f2;}
-  .ans{
-    display:none; margin-top:10px; background:#fffbeb; border:1px solid #fde68a;
-    border-radius:10px; padding:12px 16px; font-size:14px;
-  }
-  .ans.show{display:block;}
-  .btn{
-    border:none; cursor:pointer; border-radius:9px; font-size:14px; font-weight:600;
-    padding:8px 16px; transition:.15s;
-  }
-  .btn-show{background:#eef2ff; color:var(--brand1);}
-  .btn-show:hover{background:#e0e7ff;}
-  .btn-main{
-    background:linear-gradient(90deg,var(--brand1),var(--brand2)); color:#fff; padding:12px 22px;
-  }
-  .btn-main:hover{filter:brightness(1.08);}
-  .quiz-foot{display:flex; justify-content:space-between; align-items:center; margin-top:14px;}
-  .score{font-size:15px; font-weight:700; color:var(--brand2);}
-  footer{text-align:center; margin-top:26px; color:var(--sub); font-size:13px;}
-  ul,ol{margin-left:20px;}
-  li{margin:4px 0;}
+  .wrap{max-width:900px;margin:0 auto}
+  /* ===== header ===== */
+  header{text-align:center;padding:10px 8px 4px}
+  .kicker{display:inline-flex;gap:8px;align-items:center;background:var(--chip);
+    color:#4f46e5;font-weight:700;padding:6px 15px;border-radius:999px;font-size:13px}
+  h1{font-size:31px;margin:14px 0 6px;letter-spacing:.4px}
+  .grad{background:linear-gradient(90deg,#4f46e5,#9333ea,#0ea5e9);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--sub);font-size:14.5px}
+  .meta-line{margin-top:14px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .pill{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 14px;
+    font-size:13px;font-weight:600}
+  /* ===== 学习章节 ===== */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:22px 24px;margin-top:18px;box-shadow:0 5px 18px rgba(20,30,80,.05)}
+  .card>h2{font-size:19px;color:#4338ca;display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .card>h2 .n{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;min-width:28px;
+    height:28px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;font-size:14px}
+  .def{background:linear-gradient(135deg,#f4f3ff,#eef7ff);border-left:4px solid #4f46e5;
+    padding:13px 17px;border-radius:0 12px 12px 0;font-size:16px;font-weight:700;margin:10px 0}
+  p.sec{margin:9px 0;font-size:15px}
+  .g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:12px;margin-top:10px}
+  .mini{background:#fafbff;border:1px dashed #ccd3ec;border-radius:12px;padding:11px 14px}
+  .mini b{display:block;color:#4338ca;font-size:14px;margin-bottom:3px}
+  .mini span{font-size:13px;color:var(--sub)}
+  code,pre{font-family:Consolas,"JetBrains Mono","Courier New",monospace}
+  code{background:#eef0f9;border-radius:5px;padding:1px 6px;font-size:.92em;color:#5b21b6}
+  pre{background:#141a2e;color:#e5e9ff;border-radius:12px;padding:14px 16px;font-size:13px;
+    overflow-x:auto;line-height:1.6;margin:10px 0}
+  pre .cm{color:#8b93b8}
+  pre .k{color:#c4b5fd}
+  .src-line{margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);
+    font-size:12.5px;color:var(--sub)}
+  .src-line a{color:#4f46e5;text-decoration:none;font-weight:600}
+  .src-line a:hover{text-decoration:underline}
+  .flow{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;align-items:center;margin:8px 0}
+  .step{background:#fff;border:1.5px solid var(--line);border-radius:11px;padding:7px 13px;
+    font-size:13.5px;font-weight:700;text-align:center}
+  .step i{display:block;font-style:normal;font-weight:400;color:var(--sub);font-size:11.5px}
+  .arr{color:#9333ea;font-weight:800}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+  th,td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top}
+  th{background:#f1f2ff;color:#4338ca}
+  .faq{border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:10px 0}
+  .faq b{color:#4338ca}
+  /* ===== 资料 ===== */
+  .ref{list-style:none;margin-top:8px}
+  .ref li{background:#fbfbff;border:1px solid var(--line);border-radius:10px;padding:9px 14px;
+    margin:7px 0;font-size:14px}
+  .ref .tag{display:inline-block;font-size:11px;font-weight:700;color:#fff;border-radius:5px;
+    padding:1px 8px;margin-right:8px;vertical-align:1px}
+  .t-off{background:#7c3aed}.t-zh{background:#0ea5e9}.t-demo{background:#059669}
+  .ref a{color:#4f46e5;text-decoration:none;font-weight:600;word-break:break-all}
+  /* ===== 测验 ===== */
+  .quiz-wrap{background:linear-gradient(135deg,#1e1b4b,#312e81 55%,#4c1d95);color:#fff;
+    border-radius:20px;padding:24px 22px;margin-top:22px}
+  .quiz-wrap h2{color:#fff;margin-bottom:4px}
+  .dash{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+  .dbox{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
+    border-radius:12px;padding:8px 16px;min-width:120px}
+  .dbox .lb{font-size:11.5px;opacity:.75;display:block}
+  .dbox .vl{font-size:20px;font-weight:800}
+  .lvl-l1{color:#7dd3fc}.lvl-l2{color:#c4b5fd}.lvl-l3{color:#fcd34d}
+  #qbox{background:#fff;color:var(--ink);border-radius:14px;padding:18px;margin-top:6px}
+  .qmeta{font-size:12px;font-weight:700;color:#7c3aed;margin-bottom:4px}
+  .qt{font-size:16.5px;font-weight:700;margin-bottom:12px}
+  .opts{display:grid;gap:9px}
+  .opt{text-align:left;background:#f8f9ff;border:1.5px solid var(--line);border-radius:11px;
+    padding:10px 15px;font-size:14.5px;cursor:pointer;transition:.15s;color:var(--ink)}
+  .opt:hover{border-color:#7c3aed;background:#f3efff}
+  .opt.lock{cursor:default;opacity:.85}
+  .opt.okk{border-color:var(--ok);background:#ecfdf5}
+  .opt.bad{border-color:var(--bad);background:#fef2f2}
+  .opt .mk{font-weight:800}
+  .fb{border-radius:11px;padding:11px 14px;margin-top:12px;font-size:14px;display:none}
+  .fb.show{display:block}
+  .fb.up{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46}
+  .fb.down{background:#fffbeb;border:1px solid #fde68a;color:#92400e}
+  .btns{margin-top:13px;display:flex;gap:10px;flex-wrap:wrap}
+  .btn{border:none;cursor:pointer;border-radius:10px;font-size:14.5px;font-weight:700;
+    padding:10px 20px;transition:.15s}
+  .btn.next{background:linear-gradient(90deg,#4f46e5,#7c3aed);color:#fff}
+  .btn.next:hover{filter:brightness(1.1)}
+  .btn.again{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.4)}
+  #final{display:none;text-align:center;padding:22px 10px}
+  #final .rank{font-size:46px}
+  #final h3{font-size:22px;margin:8px 0}
+  #final p{color:#e0e7ff;font-size:14.5px}
+  footer{text-align:center;margin-top:26px;color:var(--sub);font-size:12.5px}
+  a.top{color:#4f46e5}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <header>
-    <span class="kicker">🧠 大数据与人工智能 · 学习卡 No.03</span>
-    <h1>一分钟掌握 <span class="grad">Agent Skill</span></h1>
-    <div class="sub">看完卡片约 60 秒 → 滑到底部自测 5 题</div>
-    <div class="timer">⏱ 目标用时：1 分钟阅读 + 2 分钟测试</div>
-  </header>
+<header>
+  <span class="kicker">🧠 大数据与人工智能课程 · 专题学习 No.03</span>
+  <h1>从零掌握 <span class="grad">Agent Skill</span></h1>
+  <div class="sub">概念 → 结构 → 上手 → 辨析 → 分层自测（答对升级 · 答错降级）</div>
+  <div class="meta-line">
+    <span class="pill">⏱ 阅读约 8 分钟</span>
+    <span class="pill">🧪 测验 10 题 · 难度自适应</span>
+    <span class="pill">📚 全部知识点附官方来源</span>
+  </div>
+</header>
 
-  <!-- 1 什么是 Agent -->
-  <section class="grid">
-    <div class="card">
-      <h2><span class="num">1</span> Agent（智能体）是什么？</h2>
-      <div class="def">Agent = 能“感知目标 → 自主规划 → 调用工具 → 完成任务”的 AI 系统</div>
-      <div class="grid-2">
-        <div class="mini"><b>🧠 大脑</b><span>大语言模型：理解意图、生成决策</span></div>
-        <div class="mini"><b>📋 规划</b><span>把大任务拆成小步骤，逐步执行</span></div>
-        <div class="mini"><b>🔧 工具</b><span>能调用外部能力：搜索、写文件、执行命令、发请求</span></div>
-        <div class="mini"><b>🗂 记忆</b><span>记住上下文与结果，持续修正</span></div>
-      </div>
-      <p style="margin-top:10px;font-size:14px;color:var(--sub)">一句话记忆：<b>Agent = LLM + 规划 + 记忆 + 工具</b></p>
-    </div>
+<!-- 01 Agent -->
+<div class="card">
+  <h2><span class="n">1</span> 先搞懂：Agent（智能体）是什么？</h2>
+  <div class="def">Agent 是能够自主完成任务的 AI 系统：理解目标 → 规划步骤 → 调用工具 → 得到结果。</div>
+  <p class="sec">它不是"聊天机器人"，而是一个会"动手做事"的系统。业界公认的四要素：</p>
+  <div class="g2">
+    <div class="mini"><b>🧠 大脑（LLM）</b><span>大语言模型负责理解、推理、生成计划与内容</span></div>
+    <div class="mini"><b>📋 规划（Planning）</b><span>把复杂任务拆解成可执行的小步骤</span></div>
+    <div class="mini"><b>🔧 工具（Tools）</b><span>调用外部能力：搜索网页、执行代码、操作文件、调 API</span></div>
+    <div class="mini"><b>🗂 记忆（Memory）</b><span>保存上下文、中间结果，持续修正方向</span></div>
+  </div>
+  <div class="src-line">📚 本节来源：
+    <a href="https://lilianweng.github.io/posts/2023-06-23-agent/" target="_blank">Lilian Weng《LLM Powered Autonomous Agents》(Agent 经典长文)</a> ·
+    <a href="https://docs.langchain.com/oss/python/langchain/agents" target="_blank">LangChain 官方 Agents 概念</a> ·
+    <a href="https://openai.github.io/openai-agents-python/tools/" target="_blank">OpenAI Agents SDK — Tools</a>
+  </div>
+</div>
 
-    <!-- 2 什么是 Skill -->
-    <div class="card">
-      <h2><span class="num">2</span> Skill（技能）是什么？</h2>
-      <div class="def">Skill 是给 Agent 预装好的「专项能力包 / 操作手册」</div>
-      <p style="font-size:15px">当任务匹配某个 Skill 时，Agent 就按这份手册行动，<b>不用每次重新发明流程</b>。
-        打个比方：Skill 之于 Agent，就像 <b>SOP 之于新员工</b>，<b>插件之于浏览器</b>。</p>
-      <div class="grid-2" style="margin-top:12px">
-        <div class="mini"><b>📄 SKILL.md</b><span>技能说明书：<code>name</code> 技能名、<code>description</code> 何时该用、正文写清楚操作步骤与规范</span></div>
-        <div class="mini"><b>📁 scripts/</b><span>可执行的辅助脚本（Python/Shell 等），把重复劳动自动化</span></div>
-        <div class="mini"><b>✨ 价值</b><span>结果稳定、开箱即用、知识沉淀、可复用可分享</span></div>
-        <div class="mini"><b>🎯 关键</b><span><code>description</code> 写得越具体，Agent 越能在正确时机调用它</span></div>
-      </div>
-    </div>
+<!-- 02 Skill -->
+<div class="card">
+  <h2><span class="n">2</span> Agent Skill：给智能体的"专项能力包"</h2>
+  <div class="def">Skill 是把"某类任务怎么做"沉淀成的一份能力包 —— Agent 遇到匹配任务时，按里面写好的流程执行，不必每次重新摸索。</div>
+  <table>
+    <tr><th>类比</th><th>理解</th></tr>
+    <tr><td>📖 给新员工的 <b>SOP 手册</b></td><td>不用从头教，照着流程就能做好</td></tr>
+    <tr><td>🧩 浏览器的<b>插件</b></td><td>按需加载，缺什么能力装什么</td></tr>
+    <tr><td>⚙️ 工人的<b>专用工具</b></td><td>把通用能力变成"专项专家"</td></tr>
+  </table>
+  <p class="sec">一句话：<b>Skill = 专业流程知识 + 可执行脚本</b>。让通用 Agent 在特定领域立刻变得专业、稳定、可复用。</p>
+  <div class="src-line">📚 本节来源：
+    <a href="https://code.claude.com/docs/zh-CN/skills" target="_blank">Claude 官方 Skills 文档（中文）</a> ·
+    <a href="https://github.com/anthropics/skills" target="_blank">anthropics/skills 官方开源仓库</a> ·
+    <a href="https://baike.baidu.com/item/Agent%20Skills/67261531" target="_blank">百度百科「Agent Skills」词条</a>
+  </div>
+</div>
 
-    <!-- 3 工作流程 -->
-    <div class="card">
-      <h2><span class="num">3</span> 一次典型工作流程</h2>
-      <div class="flow">
-        <div class="step">用户提出任务<i>“做一份周报”</i></div>
-        <div class="arrow">→</div>
-        <div class="step">Agent 理解意图<i>LLM 推理</i></div>
-        <div class="arrow">→</div>
-        <div class="step">匹配 Skill<i>读 description</i></div>
-        <div class="arrow">→</div>
-        <div class="step">加载手册并执行<i>步骤+脚本+工具</i></div>
-        <div class="arrow">→</div>
-        <div class="step">交付结果<i>反馈给用户</i></div>
-      </div>
-      <p style="margin-top:12px;font-size:14px;color:var(--sub)">核心逻辑：<b>“会用的工具” 与 “会做事的方法” 分离</b> —— 方法沉淀在 Skill 里，人人都能共享。</p>
-    </div>
+<!-- 03 结构 -->
+<div class="card">
+  <h2><span class="n">3</span> 一个 Skill 内部长什么样？</h2>
+  <p class="sec">每个 Skill 是仓库里的一个<b>独立文件夹</b>，核心是 <code>SKILL.md</code>：</p>
+<pre><code><span class="cm"># 一个典型 Skill 的目录结构（以官方仓库示例为原型）</span>
+my-skill/
+├── <span class="k">SKILL.md</span>      <span class="cm"># ★ 技能说明书：元信息 + 使用步骤（必备）</span>
+├── scripts/     <span class="cm"># 可复用脚本（Python/Shell 等，可选）</span>
+├── references/  <span class="cm"># 参考资料 / 模板（可选）</span>
+└── assets/      <span class="cm"># 图标、示例文件等（可选）</span></code></pre>
+  <p class="sec">其中 <code>SKILL.md</code> 的头部（Frontmatter）有<b>两个关键字段</b>：</p>
+<pre><code>---
+<span class="k">name</span>: my-skill        <span class="cm"># 技能名（简短）</span>
+<span class="k">description</span>: 当用户需要……时使用    <span class="cm"># ★ description = Agent 的"触发开关"</span>
+---
 
-    <!-- 4 记忆卡 -->
-    <div class="memory">
-      <h2>💾 60 秒记忆卡（考前只看这里）</h2>
-      <ol>
-        <li><b>Agent 四要素</b> = 大脑(LLM) + 规划 + 记忆 + 工具</li>
-        <li><b>Skill</b> = 给 Agent 的“专项能力包”，核心是 <code>SKILL.md</code>（元信息+操作手册）+ <code>scripts</code>（脚本）</li>
-        <li><b>description 决定触发</b>：写清“什么场景/什么任务”用，Agent 才能对号入座</li>
-        <li><b>Skill 的意义</b>：把高质量做事流程沉淀为可复用资产，让 Agent 稳定、专业、可分享</li>
-      </ol>
-    </div>
+<span class="cm"># 使用步骤（正文）</span>
+1. …… 2. …… 3. ……</code></pre>
+  <div class="g2">
+    <div class="mini"><b>description 决定"何时触发"</b><span>写清适用场景、触发词、不适用的情况，Agent 才能对号入座</span></div>
+    <div class="mini"><b>正文决定"怎么做"</b><span>分步骤、带规范与检查项，确保输出质量稳定</span></div>
+    <div class="mini"><b>scripts 决定"自动化程度"</b><span>把重复劳动写成脚本，一步执行</span></div>
+    <div class="mini"><b>按需加载</b><span>Skill 平时不占用上下文，匹配任务时才被读取——轻量高效</span></div>
+  </div>
+  <div class="src-line">📚 本节来源：
+    <a href="https://code.claude.com/docs/zh-CN/skills" target="_blank">Claude 官方 Skills 文档（中文）— SKILL.md 规范</a> ·
+    <a href="https://github.com/anthropics/skills" target="_blank">anthropics/skills（17+ 个官方示例可参考）</a>
+  </div>
+</div>
 
-    <!-- 5 自测题 -->
-    <div class="card">
-      <h2><span class="num">5</span> 自测题（5 题 · 约 2 分钟）</h2>
+<!-- 04 工作流 -->
+<div class="card">
+  <h2><span class="n">4</span> Agent + Skill 的协作流程</h2>
+  <div class="flow">
+    <div class="step">用户提任务<i>"帮我做张 PPT"</i></div><span class="arr">→</span>
+    <div class="step">LLM 理解意图<i>推理</i></div><span class="arr">→</span>
+    <div class="step">匹配 Skill<i>读各 description</i></div><span class="arr">→</span>
+    <div class="step">加载该 SKILL.md<i>按需读入</i></div><span class="arr">→</span>
+    <div class="step">执行步骤+脚本<i>产出结果</i></div><span class="arr">→</span>
+    <div class="step">反馈用户<i>完成</i></div>
+  </div>
+  <p class="sec" style="text-align:center">核心设计：<b>"会用的工具"(MCP/函数) 与 "会做事的方法"(Skill) 分离</b></p>
+  <div class="src-line">📚 本节来源：
+    <a href="https://code.claude.com/docs/zh-CN/skills" target="_blank">Claude 官方 Skills 文档 — 触发与加载机制</a>
+  </div>
+</div>
 
-      <div class="q" data-q="1">
-        <div class="qmeta">Q1 · 单选题</div>
-        <div class="qt">以下哪一项<b>不属于</b> Agent 的核心组成？</div>
-        <div class="opts">
-          <button class="opt" data-correct="false">A. 大语言模型（理解与决策）</button>
-          <button class="opt" data-correct="true">B. 更高性能的显卡</button>
-          <button class="opt" data-correct="false">C. 工具调用能力</button>
-          <button class="opt" data-correct="false">D. 记忆与规划</button>
-        </div>
-        <button class="btn btn-show" data-show="0">查看答案</button>
-        <div class="ans">Agent = LLM + 规划 + 记忆 + 工具，与硬件型号无关。故选 <b>B</b>。</div>
-      </div>
+<!-- 05 最佳实践 + FAQ -->
+<div class="card">
+  <h2><span class="n">5</span> 上手建议与常见辨析（避坑）</h2>
+  <div class="g2">
+    <div class="mini"><b>✅ 写好 description</b><span>包含：什么时候用 + 典型触发词 + 什么时候别用</span></div>
+    <div class="mini"><b>✅ 聚焦单一职责</b><span>一个 Skill 只做一件事，好匹配、好维护</span></div>
+    <div class="mini"><b>✅ 正文写步骤</b><span>像给同事的交接说明：步骤+规范+自检清单</span></div>
+    <div class="mini"><b>✅ 附最小示例</b><span>放一个可运行 demo，便于验证与学习</span></div>
+  </div>
+  <div class="faq"><b>❓ Skill 和"每次都写一大段提示词"有什么区别？</b>
+    <br>提示词每次都要重写、容易遗漏；Skill 把最佳流程<b>一次沉淀、反复复用</b>，还能随仓库共享给他人。</div>
+  <div class="faq"><b>❓ Skill 和 MCP / Function Calling（工具）是什么关系？</b>
+    <br>工具/函数是 Agent 的<b>"手脚"</b>（能做什么外部动作）；Skill 是<b>"方法论"</b>（这件事怎么做才专业）。两者配合：Skill 告诉流程，工具负责执行。学习材料常将 MCP 定义为工具连接协议。</div>
+  <div class="faq"><b>❓ Skill 需要每时每刻都占着上下文吗？</b>
+    <br>不需要。Skill 采用<b>按需加载</b>：平时只暴露 description（很小），任务匹配成功才读取完整内容。</div>
+  <div class="faq"><b>❓ 我自己能创建 Skill 吗？</b>
+    <br>可以。写一个文件夹 + 一个 SKILL.md 即可起步，参考官方仓库里的示例最快上手。</div>
+  <div class="src-line">📚 本节来源：
+    <a href="https://code.claude.com/docs/zh-CN/skills" target="_blank">Claude 官方文档 — 编写最佳实践</a> ·
+    <a href="https://github.com/anthropics/skills" target="_blank">anthropics/skills 官方示例</a> ·
+    <a href="https://openai.github.io/openai-agents-python/tools/" target="_blank">OpenAI Agents SDK — Tools（工具侧参考）</a>
+  </div>
+</div>
 
-      <div class="q" data-q="2">
-        <div class="qmeta">Q2 · 单选题</div>
-        <div class="qt">一个 Skill 的“说明书”文件通常叫什么？</div>
-        <div class="opts">
-          <button class="opt" data-correct="false">A. README.md</button>
-          <button class="opt" data-correct="false">B. requirements.txt</button>
-          <button class="opt" data-correct="true">C. SKILL.md</button>
-          <button class="opt" data-correct="false">D. config.json</button>
-        </div>
-        <button class="btn btn-show" data-show="1">查看答案</button>
-        <div class="ans">习惯约定为 <b>C. SKILL.md</b>：内含 <code>name</code>、<code>description</code>（何时该用）与正文操作步骤。</div>
-      </div>
+<!-- 参考资料总表 -->
+<div class="card">
+  <h2><span class="n">📚</span> 参考资料总表（全部为本页知识来源）</h2>
+  <ol class="ref">
+    <li><span class="tag t-zh">官方·中文</span><a href="https://code.claude.com/docs/zh-CN/skills" target="_blank">Claude（Anthropic）官方 Skills 文档</a> —— SKILL.md 规范、触发机制、编写建议（本页第 2/3/4/5 节主要来源）</li>
+    <li><span class="tag t-demo">官方·示例</span><a href="https://github.com/anthropics/skills" target="_blank">anthropics/skills — 官方开源示例仓库</a> —— 真实 Skill 长什么样的最佳范本</li>
+    <li><span class="tag t-off">官方·英文</span><a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview" target="_blank">Anthropic Agent Skills 平台文档（Overview）</a></li>
+    <li><span class="tag t-off">官方·英文</span><a href="https://openai.github.io/openai-agents-python/tools/" target="_blank">OpenAI Agents SDK — Tools 文档</a> —— "Agent + 工具"体系的另一主流实现</li>
+    <li><span class="tag t-off">开源框架</span><a href="https://docs.langchain.com/oss/python/langchain/agents" target="_blank">LangChain Agents 官方概念文档</a> —— Agent 定义与 ReAct/循环执行模型</li>
+    <li><span class="tag t-off">经典长文</span><a href="https://lilianweng.github.io/posts/2023-06-23-agent/" target="_blank">Lilian Weng《LLM Powered Autonomous Agents》</a> —— Agent 四要素的经典出处（第 1 节主要来源）</li>
+    <li><span class="tag t-zh">中文速览</span><a href="https://baike.baidu.com/item/Agent%20Skills/67261531" target="_blank">百度百科「Agent Skills」词条</a> —— 中文快速入门背景</li>
+  </ol>
+  <p style="font-size:12.5px;color:var(--sub);margin-top:4px">※ 测验题为教学自编，依据以上资料设计；如发现资料内容更新，以各官方链接为准。</p>
+</div>
 
-      <div class="q" data-q="3">
-        <div class="qmeta">Q3 · 单选题</div>
-        <div class="qt">Skill 的 <code>description</code> 写得模糊，最可能发生什么？</div>
-        <div class="opts">
-          <button class="opt" data-correct="true">A. Agent 在错误的时机调用，或漏掉该用它</button>
-          <button class="opt" data-correct="false">B. 程序无法启动</button>
-          <button class="opt" data-correct="false">C. Skill 自动升级</button>
-          <button class="opt" data-correct="false">D. 没有任何影响</button>
-        </div>
-        <button class="btn btn-show" data-show="2">查看答案</button>
-        <div class="ans"><b>A</b>。description 是 Agent “对号入座”的依据——越具体，触发越准确。</div>
-      </div>
+<!-- 测验 -->
+<div class="quiz-wrap">
+  <h2>🧪 分层自测 · 答对升级 · 答错降级</h2>
+  <p style="font-size:13.5px;color:#c7d2fe">规则：从 🌱 L1 起步 → 答对 <b>升一层</b>并 +1 分；答错 <b>降一层</b>并提示正确答案；共 10 题后结算评级。</p>
+  <div class="dash">
+    <div class="dbox"><span class="lb">当前难度</span><span class="vl" id="lvlText">🌱 L1 入门</span></div>
+    <div class="dbox"><span class="lb">得分</span><span class="vl" id="scoreText">0 / 0</span></div>
+    <div class="dbox"><span class="lb">剩余题数</span><span class="vl" id="leftText">10</span></div>
+  </div>
+  <div id="qbox"></div>
+  <div id="final">
+    <div class="rank" id="rankIcon">🥉</div>
+    <h3 id="rankTitle">青铜学习者</h3>
+    <p id="rankDesc"></p>
+    <p style="margin-top:10px;font-size:13px;color:#a5b4fc">小提示：回看上方 1-5 节再战一轮，效果更好。</p>
+    <button class="btn again" onclick="resetAll()">🔄 再测一轮</button>
+  </div>
+  <div class="btns" id="ctrlBtns">
+    <button class="btn next" id="nextBtn" style="display:none" onclick="nextQ()">下一题 →</button>
+  </div>
+</div>
 
-      <div class="q" data-q="4">
-        <div class="qmeta">Q4 · 判断题</div>
-        <div class="qt">“Skill 中的 scripts 脚本可有可无，Skills 只能写成纯文字说明。”</div>
-        <div class="opts">
-          <button class="opt" data-correct="false">A. 正确</button>
-          <button class="opt" data-correct="true">B. 错误</button>
-        </div>
-        <button class="btn btn-show" data-show="3">查看答案</button>
-        <div class="ans"><b>B. 错误</b>。纯文档的 Skill 也成立，但配上 <code>scripts/</code> 脚本能把重复步骤自动化，能力大大增强。</div>
-      </div>
-
-      <div class="q" data-q="5">
-        <div class="qmeta">Q5 · 简答题（口头说出即可）</div>
-        <div class="qt">用你自己的话解释：Skill 给 Agent 带来的最大价值是什么？</div>
-        <button class="btn btn-show" data-show="4">查看参考要点</button>
-        <div class="ans">参考要点：① 把“高质量做事流程”沉淀下来，Agent 开箱即用、结果稳定；② 知识可复用、可分享（团队/社区）；③ 让通用 Agent 具备“专项专家”能力，无需重复造轮子。</div>
-      </div>
-
-      <div class="quiz-foot">
-        <span class="score" id="score">得分：-- / 4（客观题）</span>
-        <button class="btn btn-main" id="reset">重置测验</button>
-      </div>
-    </div>
-  </section>
-
-  <footer>
-    📚 学有余力？下一步：动手写一个自己的 Skill —— 一个 SKILL.md + 一个脚本即可起步 · 课程学习仓库 notes/agent-skill.html
-  </footer>
+<footer>
+  📌 本学习卡保存在课程仓库 notes/agent-skill.html · 内容基于上方官方资料整理（标注了每一节的来源）
+  <br>🧭 回到 <a class="top" href="#top">顶部</a> · 大数据与人工智能课程学习仓库
+</footer>
 </div>
 
 <script>
-  let correct = 0, answered = 0;
-  const total = 4; // 客观题数量
-  document.querySelectorAll('.opt').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const q = btn.closest('.q');
-      if (q.dataset.done) return;
-      q.dataset.done = '1';
-      answered++;
-      const isRight = btn.dataset.correct === 'true';
-      btn.classList.add(isRight ? 'right' : 'wrong');
-      if (isRight) {
-        correct++;
-      } else {
-        // 标出正确项
-        q.querySelectorAll('.opt').forEach(o => {
-          if (o.dataset.correct === 'true') o.classList.add('right');
-        });
-      }
-      updateScore();
-      const ans = q.querySelector('.ans');
-      if (ans) ans.classList.add('show');
-    });
-  });
-  function updateScore() {
-    document.getElementById('score').textContent =
-      '得分：' + correct + ' / ' + total + '（客观题' + (answered >= total ? ' · 已完成' : '') + '）';
+/* ==================== 题库（L1 入门 / L2 进阶 / L3 挑战） ==================== */
+const BANK = {
+1: [
+  { t:"Agent 与传统聊天式 LLM 最核心的区别是什么？",
+    opts:["A. 模型参数量更大","B. 能调用工具、自主规划并执行任务","C. 支持更多语言","D. 回答速度更快"], c:1,
+    exp:"Agent 的关键在于“行动闭环”：规划 + 调用工具 + 完成任务；聊天 LLM 通常只做文本往返。（来源：参考资料 1/5/6）" },
+  { t:"以下哪一项不属于 Agent 的四大核心组成？",
+    opts:["A. 大语言模型（大脑）","B. 规划能力","C. 更高性能的显卡","D. 工具调用与记忆"], c:2,
+    exp:"四要素 = 大脑 + 规划 + 记忆 + 工具，与硬件无关。（来源：参考资料 6）" },
+  { t:"“Skill 是给 Agent 的专项能力包” — 这个说法正确吗？",
+    opts:["A. 正确","B. 错误，Skill 是给人类用的"], c:0,
+    exp:"正确。Skill 把“怎么做某类任务”的方法打包，Agent 按需加载执行。（来源：参考资料 1/7）" },
+  { t:"一个 Skill 文件夹里最核心、必备的文件是？",
+    opts:["A. README.md","B. SKILL.md","C. config.json","D. main.py"], c:1,
+    exp:"SKILL.md 是技能说明书（元信息+操作步骤），属于必备项。（来源：参考资料 1/2）" },
+  { t:"Skill 平时会一直占着 Agent 的上下文（记忆空间）吗？",
+    opts:["A. 会，永远常驻","B. 不会，按需加载"], c:1,
+    exp:"Skill 采用按需加载：任务匹配成功才读入完整内容，轻量高效。（来源：参考资料 1）" }
+],
+2: [
+  { t:"SKILL.md 头部（Frontmatter）中，哪个字段决定了 Agent “何时触发”这个 Skill？",
+    opts:["A. name","B. version","C. description","D. license"], c:2,
+    exp:"description 写明适用场景与触发词，是 Agent 对号入座的依据。（来源：参考资料 1/2）" },
+  { t:"description 写得太模糊，最可能发生什么？",
+    opts:["A. 没有任何影响","B. Skill 会自动修正","C. Agent 可能漏用或用错时机","D. 仓库无法推送"], c:2,
+    exp:"模糊的描述 = 模糊的触发。写得具体（何时用/何时别用）是 Skill 质量的第一关。（来源：参考资料 1）" },
+  { t:"“会用的工具”（如 MCP、Function Calling）与 Skill 的正确关系是？",
+    opts:["A. 完全相同的概念","B. 工具=手脚（执行外部动作），Skill=方法论（规定怎么做）","C. Skill 可以替代操作系统","D. 两者无关"], c:1,
+    exp:"工具提供外部动作能力，Skill 提供流程与方法，二者配合使用。（来源：参考资料 1/4）" },
+  { t:"下列哪一项是 Skill 与“临时写一大段提示词”相比最大的价值？",
+    opts:["A. 提示词更长","B. 能自动上网","C. 把高质量流程沉淀为可复用资产，输出稳定、可共享","D. 不需要模型"], c:2,
+    exp:"一次沉淀、反复复用、随仓库共享——这是 Skill 的核心价值。（来源：参考资料 1/7）" },
+  { t:"Agent 匹配 Skill 的典型顺序是？",
+    opts:["A. 先执行脚本，再读 description","B. 读各 Skill 的 description → 匹配 → 加载对应 SKILL.md → 执行","C. 随机挑一个执行","D. 用户手动指定路径"], c:1,
+    exp:"流程：理解意图 → 比对 description → 按需加载 → 执行步骤/脚本。（来源：参考资料 1/4）" }
+],
+3: [
+  { t:"官方 skills 仓库（anthropics/skills）的价值是什么？",
+    opts:["A. 只是一个公告栏","B. 提供大量真实 Skill 示例与规范，是学习与复用的范本","C. 收费下载","D. 只有英文 PPT 一个技能"], c:1,
+    exp:"该仓库沉淀了官方标准与十余个可运行的示例 Skill，是最好的“活教材”。（来源：参考资料 2）" },
+  { t:"一个设计良好的 description 应当包含什么？",
+    opts:["A. 只写名称","B. 适用场景 + 典型触发词 + 何时不应该使用","C. 只写安装命令","D. 完整代码"], c:1,
+    exp:"包含“用/不用”的边界，Agent 才能精准触发、避免误用。（来源：参考资料 1）" },
+  { t:"如果一个 Skill 被拆得太“大而全”，最可能的问题是什么？",
+    opts:["A. 没有","B. description 很难精准匹配，维护也困难","C. 一定更快","D. 会自动拆分子技能"], c:1,
+    exp:"Skill 建议聚焦单一职责：好匹配、好测试、好维护。（来源：参考资料 1）" },
+  { t:"关于 Skill、Agent、工具三者的最佳表述是？",
+    opts:["A. Agent 用 Skill 决定“怎么做专业”，用工具完成“外部动作”","B. Skill 是硬件设备","C. 工具是文档格式","D. 三者互不相关"], c:0,
+    exp:"Agent=调度者，Skill=方法库，Tools=执行器，三者构成完整能力闭环。（来源：参考资料 1/4/5）" }
+]
+};
+
+const TOTAL = 10;
+const LVL_NAME = {1:"🌱 L1 入门",2:"⚡ L2 进阶",3:"🏆 L3 挑战"};
+const LVL_COLOR = {1:"lvl-l1",2:"lvl-l2",3:"lvl-l3"};
+let level=1, score=0, asked=0, current=null, used=[];
+
+function pickQ(){
+  // 优先从当前层抽未答题，取不到则退向相邻层
+  for(let delta=0; delta<=2; delta++){
+    const pool = BANK[level]||[];
+    const cand = pool.filter((_,i)=>!used.includes(''+level+'_'+i));
+    if(cand.length) { const i = pool.indexOf(cand[0]); used.push(''+level+'_'+i); return pool[i]; }
+    if(delta===0){ // 相邻层兜底
+      const alt = level>1 ? 1 : 2; // 简化：尝试回退层或上升层
+      const pool2=BANK[alt]||[];
+      const cand2=pool2.filter((_,i)=>!used.includes(''+alt+'_'+i));
+      if(cand2.length){ const i=pool2.indexOf(cand2[0]); used.push(''+alt+'_'+i); return pool2[i]; }
+    }
   }
-  document.querySelectorAll('.btn-show').forEach(b => {
-    b.addEventListener('click', () => {
-      const q = b.closest('.q');
-      const ans = q.querySelector('.ans');
-      if (ans) ans.classList.add('show');
-    });
-  });
-  document.getElementById('reset').addEventListener('click', () => {
-    correct = 0; answered = 0;
-    document.querySelectorAll('.q').forEach(q => { q.dataset.done = ''; });
-    document.querySelectorAll('.opt').forEach(o => o.classList.remove('right','wrong'));
-    document.querySelectorAll('.ans').forEach(a => a.classList.remove('show'));
-    updateScore();
-  });
+  return null;
+}
+
+function showQ(){
+  if(asked>=TOTAL) return finish();
+  current=pickQ();
+  if(!current) return finish();
+  asked++;
+  const qbox=document.getElementById('qbox');
+  qbox.innerHTML =
+    '<div class="qmeta">第 '+asked+' / '+TOTAL+' 题 · 难度 '+LVL_NAME[level]+'</div>'+
+    '<div class="qt">'+current.t+'</div>'+
+    '<div class="opts">'+current.opts.map((o,i)=>
+      '<button class="opt" onclick="answer('+i+',this)"><span class="mk">'+(i+1)+'.</span> '+o.slice(o.indexOf('.')+1)+'</button>'
+    ).join('')+'</div>'+
+    '<div class="fb" id="fb"></div>';
+  document.getElementById('ctrlBtns').innerHTML =
+    '<button class="btn next" id="nextBtn" style="display:none" onclick="nextQ()">下一题 →</button>';
+  upd();
+}
+
+function answer(i,btn){
+  const ok = i===current.c;
+  const fb=document.getElementById('fb');
+  document.querySelectorAll('.opt').forEach(b=>b.classList.add('lock'));
+  btn.classList.add(ok?'okk':'bad');
+  if(ok){
+    score++;
+    fb.className='fb show up';
+    fb.innerHTML='✅ <b>答对了！+1 分</b>　难度'+(level<3?' 升级 → '+LVL_NAME[level+1]:' 已到最高层 '+LVL_NAME[level])+'<br><span style="color:#374151">'+(current.exp||'')+'</span>';
+    if(level<3) level++;
+  }else{
+    const rightOpt=document.querySelectorAll('.opt')[current.c];
+    rightOpt.classList.add('okk');
+    fb.className='fb show down';
+    fb.innerHTML='❌ <b>答错了</b>　难度'+(level>1?' 降级 → '+LVL_NAME[level-1]:' 已是最低层')+
+      '<br><b>正确答案：</b>'+(current.opts[current.c])+
+      '<br><span style="color:#374151">'+(current.exp||'')+'</span>';
+    if(level>1) level--;
+  }
+  document.querySelectorAll('.opt').forEach(b=>b.onclick=null);
+  document.getElementById('nextBtn').style.display='inline-block';
+  upd();
+}
+
+function nextQ(){ showQ(); }
+function upd(){
+  document.getElementById('lvlText').textContent=LVL_NAME[level];
+  document.getElementById('lvlText').className='vl '+LVL_COLOR[level];
+  document.getElementById('scoreText').textContent=score+' / '+asked;
+  document.getElementById('leftText').textContent=Math.max(0,TOTAL-asked);
+}
+
+function finish(){
+  const pct=score/TOTAL;
+  let icon,title,desc;
+  if(pct>=0.9){icon='🏆';title='大师级（Agent 架构师）';desc='超过 9/10 全对！概念、结构、辨析几乎无死角，可以直接尝试动手写自己的第一个 Skill 了。';}
+  else if(pct>=0.7){icon='🥇';title='黄金（熟练应用）';desc='正确率 ≥70%，主干概念扎实。建议把第 5 节的 FAQ 与参考资料 1 再精读一遍冲满分。';}
+  else if(pct>=0.5){icon='🥈';title='白银（基础扎实）';desc:'正确率 ≥50%。回看第 1-3 节理清 Agent 四要素与 SKILL.md 结构，再战即可升级。';}
+  else{icon='🥉';title='青铜（正在入门）';desc='别灰心，这是新概念的常态。请先精读上方 1-3 节与官方文档（参考资料 1/2），再测一轮一定大涨。';}
+  document.getElementById('rankIcon').textContent=icon;
+  document.getElementById('rankTitle').textContent=title;
+  document.getElementById('rankDesc').textContent=desc+' 你的最终成绩：'+score+' / '+TOTAL+'，答题中途最高/最终难度见状态栏。';
+  document.getElementById('qbox').style.display='none';
+  document.getElementById('ctrlBtns').innerHTML='';
+  document.getElementById('final').style.display='block';
+}
+
+function resetAll(){
+  level=1;score=0;asked=0;used=[];
+  document.getElementById('final').style.display='none';
+  document.getElementById('qbox').style.display='block';
+  showQ();
+}
+showQ();
 </script>
 </body>
 </html>
