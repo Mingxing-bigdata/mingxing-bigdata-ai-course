@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Skill 一分钟速览 · 大数据与人工智能课程</title>
+<style>
+  :root{
+    --bg:#f6f7fb; --card:#ffffff; --ink:#1f2430; --sub:#5b6472;
+    --brand1:#4f46e5; --brand2:#9333ea; --accent:#0ea5e9;
+    --ok:#10b981; --line:#e6e8f0; --chip:#eef0ff;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+    background:linear-gradient(160deg,#eef1ff 0%,var(--bg) 40%);
+    color:var(--ink); line-height:1.7; padding:28px 16px 60px;
+  }
+  .wrap{max-width:880px; margin:0 auto;}
+  header{
+    text-align:center; padding:18px 10px 6px;
+  }
+  .kicker{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--chip); color:var(--brand1); font-weight:600;
+    padding:6px 14px; border-radius:999px; font-size:13px; letter-spacing:.5px;
+  }
+  h1{font-size:34px; margin:14px 0 4px; letter-spacing:.5px;}
+  h1 .grad{
+    background:linear-gradient(90deg,var(--brand1),var(--brand2),var(--accent));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .sub{color:var(--sub); font-size:15px;}
+  .timer{
+    display:inline-block; margin-top:14px; font-size:14px; font-weight:700;
+    color:#fff; background:linear-gradient(90deg,var(--brand1),var(--brand2));
+    padding:8px 18px; border-radius:10px; box-shadow:0 6px 18px rgba(79,70,229,.25);
+  }
+  .grid{display:grid; gap:16px; margin-top:26px;}
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:20px 22px; box-shadow:0 4px 14px rgba(31,36,48,.05);
+  }
+  .card h2{
+    font-size:17px; display:flex; align-items:center; gap:9px;
+    color:var(--brand1); margin-bottom:10px;
+  }
+  .card h2 .num{
+    background:linear-gradient(135deg,var(--brand1),var(--brand2)); color:#fff;
+    width:24px; height:24px; border-radius:7px; font-size:13px;
+    display:inline-flex; align-items:center; justify-content:center; flex:none;
+  }
+  .def{
+    font-size:17px; font-weight:600; margin-bottom:10px;
+    background:linear-gradient(135deg,#f5f3ff,#eef6ff);
+    border-left:4px solid var(--brand1); padding:12px 16px; border-radius:0 10px 10px 0;
+  }
+  .grid-2{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:12px;}
+  .mini{
+    background:#fafbff; border:1px dashed var(--line); border-radius:12px; padding:12px 14px;
+  }
+  .mini b{color:var(--brand1); display:block; font-size:14px; margin-bottom:4px;}
+  .mini span{font-size:13.5px; color:var(--sub);}
+  code{
+    background:#eef0f8; border-radius:5px; padding:1px 7px;
+    font-family:Consolas,"Courier New",monospace; font-size:.92em; color:#4f46e5;
+  }
+  .flow{display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center; margin-top:6px;}
+  .step{
+    background:var(--card); border:1.5px solid var(--line); border-radius:12px;
+    padding:8px 14px; font-size:13.5px; font-weight:600; text-align:center;
+  }
+  .step i{display:block; font-style:normal; color:var(--sub); font-weight:400; font-size:12px;}
+  .arrow{color:var(--brand2); font-weight:700;}
+  .tag{
+    display:inline-block; background:var(--chip); color:var(--brand1);
+    font-size:12px; font-weight:600; border-radius:6px; padding:2px 9px; margin:2px 2px 2px 0;
+  }
+  .memory{
+    background:linear-gradient(120deg,#fff7ed,#fef2f2);
+    border:1px solid #fed7aa; border-radius:16px; padding:20px 22px;
+  }
+  .memory h2{color:#ea580c;}
+  .memory ol{margin-left:20px; font-size:15px;}
+  .memory ol li{margin:8px 0;}
+  .memory b{color:#c2410c;}
+  /* quiz */
+  .q{border:1px solid var(--line); border-radius:14px; padding:16px 18px; margin-bottom:14px; background:#fcfcff;}
+  .q .qt{font-weight:700; font-size:15px; margin-bottom:4px;}
+  .q .qmeta{font-size:12px; color:var(--accent); font-weight:600;}
+  .opts{display:grid; gap:8px; margin:12px 0 10px;}
+  .opt{
+    border:1.5px solid var(--line); background:#fff; border-radius:10px;
+    padding:8px 14px; cursor:pointer; font-size:14px; transition:.15s; text-align:left;
+  }
+  .opt:hover{border-color:var(--brand1); background:#f4f5ff;}
+  .opt.right{border-color:var(--ok); background:#ecfdf5; font-weight:700;}
+  .opt.wrong{border-color:#ef4444; background:#fef2f2;}
+  .ans{
+    display:none; margin-top:10px; background:#fffbeb; border:1px solid #fde68a;
+    border-radius:10px; padding:12px 16px; font-size:14px;
+  }
+  .ans.show{display:block;}
+  .btn{
+    border:none; cursor:pointer; border-radius:9px; font-size:14px; font-weight:600;
+    padding:8px 16px; transition:.15s;
+  }
+  .btn-show{background:#eef2ff; color:var(--brand1);}
+  .btn-show:hover{background:#e0e7ff;}
+  .btn-main{
+    background:linear-gradient(90deg,var(--brand1),var(--brand2)); color:#fff; padding:12px 22px;
+  }
+  .btn-main:hover{filter:brightness(1.08);}
+  .quiz-foot{display:flex; justify-content:space-between; align-items:center; margin-top:14px;}
+  .score{font-size:15px; font-weight:700; color:var(--brand2);}
+  footer{text-align:center; margin-top:26px; color:var(--sub); font-size:13px;}
+  ul,ol{margin-left:20px;}
+  li{margin:4px 0;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <span class="kicker">🧠 大数据与人工智能 · 学习卡 No.03</span>
+    <h1>一分钟掌握 <span class="grad">Agent Skill</span></h1>
+    <div class="sub">看完卡片约 60 秒 → 滑到底部自测 5 题</div>
+    <div class="timer">⏱ 目标用时：1 分钟阅读 + 2 分钟测试</div>
+  </header>
+
+  <!-- 1 什么是 Agent -->
+  <section class="grid">
+    <div class="card">
+      <h2><span class="num">1</span> Agent（智能体）是什么？</h2>
+      <div class="def">Agent = 能“感知目标 → 自主规划 → 调用工具 → 完成任务”的 AI 系统</div>
+      <div class="grid-2">
+        <div class="mini"><b>🧠 大脑</b><span>大语言模型：理解意图、生成决策</span></div>
+        <div class="mini"><b>📋 规划</b><span>把大任务拆成小步骤，逐步执行</span></div>
+        <div class="mini"><b>🔧 工具</b><span>能调用外部能力：搜索、写文件、执行命令、发请求</span></div>
+        <div class="mini"><b>🗂 记忆</b><span>记住上下文与结果，持续修正</span></div>
+      </div>
+      <p style="margin-top:10px;font-size:14px;color:var(--sub)">一句话记忆：<b>Agent = LLM + 规划 + 记忆 + 工具</b></p>
+    </div>
+
+    <!-- 2 什么是 Skill -->
+    <div class="card">
+      <h2><span class="num">2</span> Skill（技能）是什么？</h2>
+      <div class="def">Skill 是给 Agent 预装好的「专项能力包 / 操作手册」</div>
+      <p style="font-size:15px">当任务匹配某个 Skill 时，Agent 就按这份手册行动，<b>不用每次重新发明流程</b>。
+        打个比方：Skill 之于 Agent，就像 <b>SOP 之于新员工</b>，<b>插件之于浏览器</b>。</p>
+      <div class="grid-2" style="margin-top:12px">
+        <div class="mini"><b>📄 SKILL.md</b><span>技能说明书：<code>name</code> 技能名、<code>description</code> 何时该用、正文写清楚操作步骤与规范</span></div>
+        <div class="mini"><b>📁 scripts/</b><span>可执行的辅助脚本（Python/Shell 等），把重复劳动自动化</span></div>
+        <div class="mini"><b>✨ 价值</b><span>结果稳定、开箱即用、知识沉淀、可复用可分享</span></div>
+        <div class="mini"><b>🎯 关键</b><span><code>description</code> 写得越具体，Agent 越能在正确时机调用它</span></div>
+      </div>
+    </div>
+
+    <!-- 3 工作流程 -->
+    <div class="card">
+      <h2><span class="num">3</span> 一次典型工作流程</h2>
+      <div class="flow">
+        <div class="step">用户提出任务<i>“做一份周报”</i></div>
+        <div class="arrow">→</div>
+        <div class="step">Agent 理解意图<i>LLM 推理</i></div>
+        <div class="arrow">→</div>
+        <div class="step">匹配 Skill<i>读 description</i></div>
+        <div class="arrow">→</div>
+        <div class="step">加载手册并执行<i>步骤+脚本+工具</i></div>
+        <div class="arrow">→</div>
+        <div class="step">交付结果<i>反馈给用户</i></div>
+      </div>
+      <p style="margin-top:12px;font-size:14px;color:var(--sub)">核心逻辑：<b>“会用的工具” 与 “会做事的方法” 分离</b> —— 方法沉淀在 Skill 里，人人都能共享。</p>
+    </div>
+
+    <!-- 4 记忆卡 -->
+    <div class="memory">
+      <h2>💾 60 秒记忆卡（考前只看这里）</h2>
+      <ol>
+        <li><b>Agent 四要素</b> = 大脑(LLM) + 规划 + 记忆 + 工具</li>
+        <li><b>Skill</b> = 给 Agent 的“专项能力包”，核心是 <code>SKILL.md</code>（元信息+操作手册）+ <code>scripts</code>（脚本）</li>
+        <li><b>description 决定触发</b>：写清“什么场景/什么任务”用，Agent 才能对号入座</li>
+        <li><b>Skill 的意义</b>：把高质量做事流程沉淀为可复用资产，让 Agent 稳定、专业、可分享</li>
+      </ol>
+    </div>
+
+    <!-- 5 自测题 -->
+    <div class="card">
+      <h2><span class="num">5</span> 自测题（5 题 · 约 2 分钟）</h2>
+
+      <div class="q" data-q="1">
+        <div class="qmeta">Q1 · 单选题</div>
+        <div class="qt">以下哪一项<b>不属于</b> Agent 的核心组成？</div>
+        <div class="opts">
+          <button class="opt" data-correct="false">A. 大语言模型（理解与决策）</button>
+          <button class="opt" data-correct="true">B. 更高性能的显卡</button>
+          <button class="opt" data-correct="false">C. 工具调用能力</button>
+          <button class="opt" data-correct="false">D. 记忆与规划</button>
+        </div>
+        <button class="btn btn-show" data-show="0">查看答案</button>
+        <div class="ans">Agent = LLM + 规划 + 记忆 + 工具，与硬件型号无关。故选 <b>B</b>。</div>
+      </div>
+
+      <div class="q" data-q="2">
+        <div class="qmeta">Q2 · 单选题</div>
+        <div class="qt">一个 Skill 的“说明书”文件通常叫什么？</div>
+        <div class="opts">
+          <button class="opt" data-correct="false">A. README.md</button>
+          <button class="opt" data-correct="false">B. requirements.txt</button>
+          <button class="opt" data-correct="true">C. SKILL.md</button>
+          <button class="opt" data-correct="false">D. config.json</button>
+        </div>
+        <button class="btn btn-show" data-show="1">查看答案</button>
+        <div class="ans">习惯约定为 <b>C. SKILL.md</b>：内含 <code>name</code>、<code>description</code>（何时该用）与正文操作步骤。</div>
+      </div>
+
+      <div class="q" data-q="3">
+        <div class="qmeta">Q3 · 单选题</div>
+        <div class="qt">Skill 的 <code>description</code> 写得模糊，最可能发生什么？</div>
+        <div class="opts">
+          <button class="opt" data-correct="true">A. Agent 在错误的时机调用，或漏掉该用它</button>
+          <button class="opt" data-correct="false">B. 程序无法启动</button>
+          <button class="opt" data-correct="false">C. Skill 自动升级</button>
+          <button class="opt" data-correct="false">D. 没有任何影响</button>
+        </div>
+        <button class="btn btn-show" data-show="2">查看答案</button>
+        <div class="ans"><b>A</b>。description 是 Agent “对号入座”的依据——越具体，触发越准确。</div>
+      </div>
+
+      <div class="q" data-q="4">
+        <div class="qmeta">Q4 · 判断题</div>
+        <div class="qt">“Skill 中的 scripts 脚本可有可无，Skills 只能写成纯文字说明。”</div>
+        <div class="opts">
+          <button class="opt" data-correct="false">A. 正确</button>
+          <button class="opt" data-correct="true">B. 错误</button>
+        </div>
+        <button class="btn btn-show" data-show="3">查看答案</button>
+        <div class="ans"><b>B. 错误</b>。纯文档的 Skill 也成立，但配上 <code>scripts/</code> 脚本能把重复步骤自动化，能力大大增强。</div>
+      </div>
+
+      <div class="q" data-q="5">
+        <div class="qmeta">Q5 · 简答题（口头说出即可）</div>
+        <div class="qt">用你自己的话解释：Skill 给 Agent 带来的最大价值是什么？</div>
+        <button class="btn btn-show" data-show="4">查看参考要点</button>
+        <div class="ans">参考要点：① 把“高质量做事流程”沉淀下来，Agent 开箱即用、结果稳定；② 知识可复用、可分享（团队/社区）；③ 让通用 Agent 具备“专项专家”能力，无需重复造轮子。</div>
+      </div>
+
+      <div class="quiz-foot">
+        <span class="score" id="score">得分：-- / 4（客观题）</span>
+        <button class="btn btn-main" id="reset">重置测验</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    📚 学有余力？下一步：动手写一个自己的 Skill —— 一个 SKILL.md + 一个脚本即可起步 · 课程学习仓库 notes/agent-skill.html
+  </footer>
+</div>
+
+<script>
+  let correct = 0, answered = 0;
+  const total = 4; // 客观题数量
+  document.querySelectorAll('.opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const q = btn.closest('.q');
+      if (q.dataset.done) return;
+      q.dataset.done = '1';
+      answered++;
+      const isRight = btn.dataset.correct === 'true';
+      btn.classList.add(isRight ? 'right' : 'wrong');
+      if (isRight) {
+        correct++;
+      } else {
+        // 标出正确项
+        q.querySelectorAll('.opt').forEach(o => {
+          if (o.dataset.correct === 'true') o.classList.add('right');
+        });
+      }
+      updateScore();
+      const ans = q.querySelector('.ans');
+      if (ans) ans.classList.add('show');
+    });
+  });
+  function updateScore() {
+    document.getElementById('score').textContent =
+      '得分：' + correct + ' / ' + total + '（客观题' + (answered >= total ? ' · 已完成' : '') + '）';
+  }
+  document.querySelectorAll('.btn-show').forEach(b => {
+    b.addEventListener('click', () => {
+      const q = b.closest('.q');
+      const ans = q.querySelector('.ans');
+      if (ans) ans.classList.add('show');
+    });
+  });
+  document.getElementById('reset').addEventListener('click', () => {
+    correct = 0; answered = 0;
+    document.querySelectorAll('.q').forEach(q => { q.dataset.done = ''; });
+    document.querySelectorAll('.opt').forEach(o => o.classList.remove('right','wrong'));
+    document.querySelectorAll('.ans').forEach(a => a.classList.remove('show'));
+    updateScore();
+  });
+</script>
+</body>
+</html>
