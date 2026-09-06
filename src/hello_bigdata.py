@@ -1,4 +1,9 @@
-"""课程示例：Hello 大数据。运行：python3.12 src/hello_bigdata.py"""
+"""课程示例：Hello 大数据。
+
+运行（在仓库根目录下）：
+    Windows:  python src/hello_bigdata.py
+    macOS/Linux: python3 src/hello_bigdata.py
+"""
 
 def main() -> None:
     techs = ["Spark", "Hadoop", "Flink", "Kafka", "Beam"]

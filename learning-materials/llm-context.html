@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>概念学习 · 大模型的上下文（Context）</title>
+<style>
+  :root{
+    --bg:#f4f5fb; --card:#fff; --ink:#1b2130; --sub:#5d6678;
+    --pri:#4f46e5; --pri2:#9333ea; --line:#e5e8f2;
+    --ok:#10b981; --bad:#ef4444; --chip:#eef1ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+    background:linear-gradient(165deg,#eaeefc 0%,var(--bg) 45%);color:var(--ink);
+    line-height:1.75;padding:26px 14px 70px}
+  .wrap{max-width:860px;margin:0 auto}
+  header{text-align:center;padding:8px 8px 2px}
+  .kicker{display:inline-flex;gap:8px;align-items:center;background:var(--chip);color:var(--pri);
+    font-weight:700;padding:6px 15px;border-radius:999px;font-size:13px}
+  h1{font-size:30px;margin:14px 0 6px;letter-spacing:.4px}
+  .grad{background:linear-gradient(90deg,#4f46e5,#9333ea,#0ea5e9);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--sub);font-size:14.5px}
+  .meta{margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .pill{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 13px;
+    font-size:12.5px;font-weight:600}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:20px 24px;margin-top:16px;box-shadow:0 5px 18px rgba(20,30,80,.05)}
+  .card>h2{font-size:18px;color:#4338ca;display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .card>h2 .n{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;min-width:27px;
+    height:27px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;
+    font-size:13px;flex:none}
+  p.sec{margin:8px 0;font-size:15px}
+  ul,ol{margin:8px 0 8px 22px;font-size:14.5px}
+  li{margin:5px 0}
+  .def{background:linear-gradient(135deg,#f4f3ff,#eef7ff);border-left:4px solid var(--pri);
+    padding:12px 16px;border-radius:0 12px 12px 0;font-size:15.5px;font-weight:700;margin:10px 0}
+  .note{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:10px;
+    padding:9px 14px;font-size:13px;margin:8px 0}
+  .g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:11px;margin-top:10px}
+  .mini{background:#fafbff;border:1px dashed #ccd3ec;border-radius:12px;padding:10px 13px}
+  .mini b{display:block;color:#4338ca;font-size:13.5px;margin-bottom:2px}
+  .mini span{font-size:12.5px;color:var(--sub)}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+  th,td{border:1px solid var(--line);padding:7px 11px;text-align:left;vertical-align:top}
+  th{background:#f1f2ff;color:#4338ca}
+  code{font-family:Consolas,"JetBrains Mono",monospace;background:#eef0f9;border-radius:5px;
+    padding:1px 6px;font-size:.9em;color:#5b21b6}
+  details{background:#fafbff;border:1px solid var(--line);border-radius:12px;padding:8px 14px;
+    margin:8px 0;font-size:14px}
+  summary{cursor:pointer;font-weight:700;color:#4338ca}
+  details .ans{margin-top:6px;padding-top:6px;border-top:1px dashed var(--line);color:var(--sub);
+    font-size:13.5px}
+  .src{list-style:none;margin-top:6px}
+  .src li{background:#fbfbff;border:1px solid var(--line);border-radius:10px;padding:8px 13px;
+    margin:6px 0;font-size:13.5px}
+  .src a{color:#4f46e5;text-decoration:none;font-weight:600;word-break:break-all}
+  .src a:hover{text-decoration:underline}
+  .tag{display:inline-block;font-size:11px;font-weight:700;color:#fff;border-radius:5px;
+    padding:1px 8px;margin-right:8px}
+  .t-ok{background:#059669}.t-warn{background:#d97706}
+  nav.links{margin-top:20px;text-align:center;font-size:13px}
+  nav.links a{color:#4f46e5;text-decoration:none;font-weight:600;margin:0 8px}
+  footer{text-align:center;margin-top:20px;color:var(--sub);font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="kicker">🧠 概念学习 · 由 concept-learner Skill 生成</span>
+  <h1>概念：<span class="grad">大模型的上下文（Context）</span></h1>
+  <div class="sub">学习目标 → 我的解释 → 核心机制 → 应用场景 → 易混淆与边界 → 自测 → 资料来源</div>
+  <div class="meta">
+    <span class="pill">📅 2026-09-06</span>
+    <span class="pill">📚 来源已核验</span>
+    <span class="pill">✏️ 个人解释待改写</span>
+  </div>
+</header>
+
+<div class="card">
+  <h2><span class="n">0</span> 学习目标</h2>
+  <ul>
+    <li>能解释“上下文（Context）”与“上下文窗口（Context Window）”的含义</li>
+    <li>能说清上下文为什么是 Agent 记忆与行为的“天花板”</li>
+    <li>能说出至少两种让上下文“装得下、用得好”的方法</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2><span class="n">1</span> 我的解释（个人理解）</h2>
+  <div class="def">上下文 = 模型<u>这一次回答时能看到的全部输入</u>。就像一张临时工作台：台面上摆着你放的说明书、之前的对话、检索来的资料、工具刚返回的结果——模型只能基于台面作答，台面大小有限（上下文窗口），放不下就会被裁掉或忽略。<b>模型本身没有记忆，“记得”只是把历史重新放回台面。</b></div>
+  <div class="note">📝 提交前请把上面这段话改写成你自己的表达（课程要求：概念解释不得整段照搬 AI 结果）。</div>
+</div>
+
+<div class="card">
+  <h2><span class="n">2</span> 核心机制 / 组成</h2>
+  <div class="g2">
+    <div class="mini"><b>🔁 无状态调用</b><span>每次调用模型只看你这次给的内容；跨轮“记忆”由调用方把历史拼回上下文</span></div>
+    <div class="mini"><b>🔢 Token 计量</b><span>模型按 token 切分文本；上下文窗口＝一次最多容纳的 token 数</span></div>
+    <div class="mini"><b>🧾 内容构成</b><span>系统指令 + 用户消息 + 历史对话 + 检索片段(RAG) + 工具定义/返回</span></div>
+    <div class="mini"><b>📍 位置效应</b><span>对“中间段”的记忆弱于开头与结尾（Lost in the Middle），关键信息要讲究摆放</span></div>
+    <div class="mini"><b>📏 窗口上限</b><span>如 Claude 曾把窗口从 9K 扩到 100K token（约 7.5 万英文单词）</span></div>
+    <div class="mini"><b>✂️ 超限处理</b><span>内容超窗 → 截断 / 压缩摘要 / 先检索再塞入（上下文工程三板斧）</span></div>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="n">3</span> 一个具体应用场景</h2>
+  <p class="sec"><b>场景：Agent 处理用户连续第 5 轮的提问。</b></p>
+  <p class="sec">此时调用方把前 4 轮对话、最新问题、以及刚执行完的 Python 工具输出一并放进上下文。模型“看到”之前的结论才能接话；如果历史太长，Agent 会先做一轮<b>摘要</b>，把旧对话压缩后只保留关键结论，再放进上下文——否则旧内容会把窗口撑爆。</p>
+  <p class="sec">这也解释了<b>为什么 Context 是 Agent 记忆的天花板</b>：短期记忆 ≈ 上下文里能装下的历史；装不下的要么遗忘（截断），要么搬运到外部长期记忆（向量库/文件），需要时再检索回来。</p>
+</div>
+
+<div class="card">
+  <h2><span class="n">4</span> 易混淆与使用边界</h2>
+  <table>
+    <tr><th>易混淆点</th><th>澄清</th></tr>
+    <tr><td>上下文 ≠ 长期记忆</td><td>上下文是一次性输入，会话结束即消失；长期记忆在外部存储里，靠检索回填。</td></tr>
+    <tr><td>上下文 ≠ 训练数据</td><td>模型参数里学到的知识 ≠ 你这次放进窗口的资料，两者互不替代。</td></tr>
+    <tr><td>窗口大 ≠ 记得牢</td><td>窗口只代表“能装”，不代表“每条都起作用”（中间段易被忽略、噪声会干扰）。</td></tr>
+    <tr><td>不该只靠加大窗口</td><td>盲目塞入全部资料会抬高成本/延迟、降低准确性；应先检索 + 摘要 + 结构化组织。</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2><span class="n">5</span> 自测问题（先想再点开）</h2>
+  <details><summary>Q1：为什么说“大模型没有记忆，只有上下文”？</summary>
+    <div class="ans">模型每次调用都是无状态计算；跨轮“记忆”是调用方把历史重新作为输入放回上下文实现的。</div></details>
+  <details><summary>Q2：Context Window 指什么？超限了怎么办？</summary>
+    <div class="ans">一次调用最多容纳的 token 数；超限需截断、压缩摘要或检索后用。</div></details>
+  <details><summary>Q3：为什么 Agent 的短期记忆上限≈上下文窗口？</summary>
+    <div class="ans">Agent 能“想起来”的只有放回上下文的那些信息，窗口装不下就丢了。</div></details>
+  <details><summary>Q4：检索（RAG）和上下文是什么关系？</summary>
+    <div class="ans">RAG 先把相关资料检索出来，再把“命中片段”作为上下文的一部分喂给模型，让有限的窗口装更相关的信息。</div></details>
+</div>
+
+<div class="card">
+  <h2><span class="n">6</span> 资料来源（可核查）</h2>
+  <ol class="src">
+    <li><span class="tag t-ok">已核验</span><a href="https://www.anthropic.com/news/100k-context-windows" target="_blank">Anthropic：Introducing 100K context windows</a> —— 上下文窗口含义与能装多少内容（核验于 2026-09-06）</li>
+    <li><span class="tag t-ok">已核验</span><a href="https://learn.microsoft.com/zh-cn/azure/foundry/openai/concepts/prompt-engineering" target="_blank">Microsoft Learn：提示工程技术（官方中文文档）</a> —— 如何组织指令、内容与 token 空间（核验于 2026-09-06）</li>
+    <li><span class="tag t-warn">待核验</span><a href="https://platform.openai.com/docs/concepts/context-window" target="_blank">OpenAI：Context window（平台文档）</a> —— ⚠️ 本机网络被拦截未能打开，按官方文档标题引用，请提交前自行打开确认</li>
+  </ol>
+</div>
+
+<nav class="links">
+  <a href="skill.html">下一篇：Skill →</a> ·
+  <a href="agent.html">Agent</a> ·
+  <a href="concept-relationship.html">三概念关系</a>
+</nav>
+<footer>concept-learner · 大数据与人工智能课程</footer>
+</div>
+</body>
+</html>

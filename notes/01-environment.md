@@ -4,12 +4,38 @@
 - Git 2.43
 - Python 3.12
 - VSCode 1.136
+- 课程依赖（numpy，见仓库根目录 `requirements.txt`）
 
 ## 验证
+
+> 注意：Windows 上命令是 `python`（或 `py -3.12`）；macOS / Linux 上是 `python3` / `python3.12`。下面两段按系统选其一执行。
+
+Windows（PowerShell / CMD）：
 ```bash
 git --version
-python3.12 --version
+python --version
 code --version
+```
+
+macOS / Linux：
+```bash
+git --version
+python3 --version
+code --version
+```
+
+## 安装课程依赖（numpy 等）
+
+在仓库根目录执行：
+```bash
+# Windows
+pip install -r requirements.txt
+# macOS / Linux
+pip3 install -r requirements.txt
+```
+验证：
+```bash
+python -c "import numpy; print(numpy.__version__)"
 ```
 
 ## Git 初始配置

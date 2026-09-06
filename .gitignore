@@ -12,3 +12,15 @@ venv/
 
 # 系统
 .DS_Store
+
+# 凭据与密钥（绝不提交）
+*.key
+*.pem
+*.p12
+*.pfx
+*.token
+*.secret
+credentials*
+secrets.*
+.env.*
+!.env.example

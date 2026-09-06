@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>概念学习 · Agent（智能体）</title>
+<style>
+  :root{
+    --bg:#f4f5fb; --card:#fff; --ink:#1b2130; --sub:#5d6678;
+    --pri:#4f46e5; --pri2:#9333ea; --line:#e5e8f2;
+    --ok:#10b981; --bad:#ef4444; --chip:#eef1ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+    background:linear-gradient(165deg,#eaeefc 0%,var(--bg) 45%);color:var(--ink);
+    line-height:1.75;padding:26px 14px 70px}
+  .wrap{max-width:860px;margin:0 auto}
+  header{text-align:center;padding:8px 8px 2px}
+  .kicker{display:inline-flex;gap:8px;align-items:center;background:var(--chip);color:var(--pri);
+    font-weight:700;padding:6px 15px;border-radius:999px;font-size:13px}
+  h1{font-size:30px;margin:14px 0 6px;letter-spacing:.4px}
+  .grad{background:linear-gradient(90deg,#4f46e5,#9333ea,#0ea5e9);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--sub);font-size:14.5px}
+  .meta{margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .pill{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 13px;
+    font-size:12.5px;font-weight:600}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:20px 24px;margin-top:16px;box-shadow:0 5px 18px rgba(20,30,80,.05)}
+  .card>h2{font-size:18px;color:#4338ca;display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .card>h2 .n{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;min-width:27px;
+    height:27px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;
+    font-size:13px;flex:none}
+  p.sec{margin:8px 0;font-size:15px}
+  ul,ol{margin:8px 0 8px 22px;font-size:14.5px}
+  li{margin:5px 0}
+  .def{background:linear-gradient(135deg,#f4f3ff,#eef7ff);border-left:4px solid var(--pri);
+    padding:12px 16px;border-radius:0 12px 12px 0;font-size:15.5px;font-weight:700;margin:10px 0}
+  .note{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:10px;
+    padding:9px 14px;font-size:13px;margin:8px 0}
+  .g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:11px;margin-top:10px}
+  .mini{background:#fafbff;border:1px dashed #ccd3ec;border-radius:12px;padding:10px 13px}
+  .mini b{display:block;color:#4338ca;font-size:13.5px;margin-bottom:2px}
+  .mini span{font-size:12.5px;color:var(--sub)}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+  th,td{border:1px solid var(--line);padding:7px 11px;text-align:left;vertical-align:top}
+  th{background:#f1f2ff;color:#4338ca}
+  code{font-family:Consolas,"JetBrains Mono",monospace;background:#eef0f9;border-radius:5px;
+    padding:1px 6px;font-size:.9em;color:#5b21b6}
+  pre{background:#141a2e;color:#e5e9ff;border-radius:12px;padding:13px 16px;font-size:13px;
+    overflow-x:auto;line-height:1.6;margin:10px 0}
+  .flow{background:#141a2e;color:#e5e9ff;border-radius:12px;padding:12px 16px;font-size:13px;
+    margin:10px 0;overflow-x:auto;white-space:pre;line-height:1.7}
+  details{background:#fafbff;border:1px solid var(--line);border-radius:12px;padding:8px 14px;
+    margin:8px 0;font-size:14px}
+  summary{cursor:pointer;font-weight:700;color:#4338ca}
+  details .ans{margin-top:6px;padding-top:6px;border-top:1px dashed var(--line);color:var(--sub);
+    font-size:13.5px}
+  .src{list-style:none;margin-top:6px}
+  .src li{background:#fbfbff;border:1px solid var(--line);border-radius:10px;padding:8px 13px;
+    margin:6px 0;font-size:13.5px}
+  .src a{color:#4f46e5;text-decoration:none;font-weight:600;word-break:break-all}
+  .src a:hover{text-decoration:underline}
+  .tag{display:inline-block;font-size:11px;font-weight:700;color:#fff;border-radius:5px;
+    padding:1px 8px;margin-right:8px}
+  .t-ok{background:#059669}.t-warn{background:#d97706}
+  nav.links{margin-top:20px;text-align:center;font-size:13px}
+  nav.links a{color:#4f46e5;text-decoration:none;font-weight:600;margin:0 8px}
+  footer{text-align:center;margin-top:20px;color:var(--sub);font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="kicker">🧠 概念学习 · 由 concept-learner Skill 生成</span>
+  <h1>概念：<span class="grad">Agent（智能体）</span></h1>
+  <div class="sub">学习目标 → 我的解释 → 核心机制 → 应用场景 → 易混淆与边界 → 自测 → 资料来源</div>
+  <div class="meta">
+    <span class="pill">📅 2026-09-06</span>
+    <span class="pill">📚 来源已核验</span>
+    <span class="pill">✏️ 个人解释待改写</span>
+  </div>
+</header>
+
+<div class="card">
+  <h2><span class="n">0</span> 学习目标</h2>
+  <ul>
+    <li>能说清 Agent 与“聊天式大模型”的本质区别</li>
+    <li>能列出 Agent 的核心组成，并解释它们如何协作</li>
+    <li>能判断“某个任务该不该用 Agent 来做”</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2><span class="n">1</span> 我的解释（个人理解）</h2>
+  <div class="def">Agent 是“会自己想办法把任务做完”的 AI 程序：给它一个目标，它自己拆步骤、选工具、执行、看结果，必要时调整做法，直到办完事——而不是只回一段话。判断标准：它有没有形成“规划 → 行动 → 观察 → 再行动”的闭环。</div>
+  <div class="note">📝 提交前请把上面这段话改写成你自己的表达（课程要求：概念解释不得整段照搬 AI 结果）。</div>
+</div>
+
+<div class="card">
+  <h2><span class="n">2</span> 核心机制 / 组成</h2>
+  <p class="sec">业界公认 Agent ≈ 一个循环，由四类组件支撑：</p>
+  <div class="flow">目标 ─► LLM（大脑：理解＋推理）
+              │  规划（拆步骤 / 反思修正）
+              │  调用 工具（代码执行 · 搜索 · API · 文件）
+              ▼
+           观察结果 ─► 把结果放回上下文，继续推理
+              │
+              └──► 目标达成，输出</div>
+  <div class="g2">
+    <div class="mini"><b>🧠 LLM（大脑）</b><span>理解目标、生成计划与内容，类比：员工的大脑</span></div>
+    <div class="mini"><b>📋 规划 Planning</b><span>任务拆解与自我反思（如 ReAct），类比：想清楚先后顺序</span></div>
+    <div class="mini"><b>🗂 记忆 Memory</b><span>短期＝对话上下文；长期＝向量库/文件，类比：便签＋档案柜</span></div>
+    <div class="mini"><b>🔧 工具 Tools</b><span>代码执行、网页搜索、调 API、读写文件，类比：手脚与设备</span></div>
+  </div>
+  <p class="sec">工程化参考：LangChain 把 Agent 定义为 <code>模型 + 工具箱 + 控制器(Harness)</code>，由控制器驱动“模型在循环中调用工具直到完成”。</p>
+</div>
+
+<div class="card">
+  <h2><span class="n">3</span> 一个具体应用场景</h2>
+  <p class="sec"><b>让一个数据分析 Agent 处理：“找出某电商本月销售额异常的省份，并画一张图”。</b></p>
+  <ol>
+    <li><b>规划</b>：读文件 → 按省份汇总 → 与上月对比找异常 → 出图；</li>
+    <li><b>调用工具</b>：用 Python 执行 pandas 统计、matplotlib 画图；</li>
+    <li><b>观察与修正</b>：发现某省数据缺失，Agent 决定先做缺失值处理再继续；</li>
+    <li><b>完成</b>：返回“异常省份 + 原因线索 + 图表”。</li>
+  </ol>
+  <p class="sec">传统聊天机器人做不到第 2、3 步——它没有执行环境，也不会因“看到结果不对”而自我修正。</p>
+</div>
+
+<div class="card">
+  <h2><span class="n">4</span> 易混淆与使用边界</h2>
+  <table>
+    <tr><th>对比对象</th><th>关键区别</th></tr>
+    <tr><td>vs 聊天机器人</td><td>聊天式 LLM 只做“文本往返”；Agent 的关键是<b>行动闭环</b>（调用外部工具并基于结果继续）。会多轮对话 ≠ Agent。</td></tr>
+    <tr><td>vs 工作流 Workflow</td><td>工作流是“预先写死步骤的管线”；Agent 由模型<b>自主决定步骤</b>。确定性任务用工作流更稳，开放式任务才值得上 Agent。</td></tr>
+    <tr><td>vs RAG 检索增强</td><td>RAG 解决“记不住/不知道”的知识供给，是 Agent 可调用的手段之一，<b>不互斥</b>。</td></tr>
+  </table>
+  <p class="sec"><b>不该用 Agent 的情况</b>：步骤完全固定的流程；对成本/延迟极敏感；输出必须严格可控；工具不可靠又无法验证。Agent 的代价是<b>不可预测性</b>——所以要给工具设计好接口、过程保持透明、必要时加入人审。</p>
+</div>
+
+<div class="card">
+  <h2><span class="n">5</span> 自测问题（先想再点开）</h2>
+  <details><summary>Q1：Agent 与聊天机器人的分界线是什么？</summary>
+    <div class="ans">是否形成“规划 → 调用工具 → 观察结果 → 继续行动”的自主闭环。</div></details>
+  <details><summary>Q2：Agent 四要素缺了“工具”，会退化成什么？</summary>
+    <div class="ans">退化成“只会说不会做”的对话模型——有目标、无执行力。</div></details>
+  <details><summary>Q3：每周固定跑一遍的报表任务，适合用 Agent 吗？</summary>
+    <div class="ans">不太适合：属于确定性流程，用固定脚本/工作流更稳、更省成本。</div></details>
+  <details><summary>Q4：为什么说 Agent 有“不可预测性”？</summary>
+    <div class="ans">执行路径由模型自主决定，同样的输入可能走不同分支；需要透明展示规划、可靠工具与验证手段兜底。</div></details>
+</div>
+
+<div class="card">
+  <h2><span class="n">6</span> 资料来源（可核查）</h2>
+  <ol class="src">
+    <li><span class="tag t-ok">已核验</span><a href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank">Anthropic：Building Effective AI Agents</a> —— 官方工程实践：工作流 vs Agent、三大设计原则（核验于 2026-09-06）</li>
+    <li><span class="tag t-ok">已核验</span><a href="https://lilianweng.github.io/posts/2023-06-23-agent/" target="_blank">Lilian Weng：LLM Powered Autonomous Agents</a> —— 经典长文：规划/记忆/工具三大组件（核验于 2026-09-06）</li>
+    <li><span class="tag t-ok">已核验</span><a href="https://docs.langchain.com/oss/python/langchain/agents" target="_blank">LangChain：Agents 官方概念文档</a> —— 模型+工具+控制器的工程化定义（核验于 2026-09-06）</li>
+  </ol>
+</div>
+
+<nav class="links">
+  <a href="llm-context.html">下一篇：大模型的上下文 →</a> ·
+  <a href="skill.html">Skill</a> ·
+  <a href="concept-relationship.html">三概念关系</a>
+</nav>
+<footer>concept-learner · 大数据与人工智能课程</footer>
+</div>
+</body>
+</html>

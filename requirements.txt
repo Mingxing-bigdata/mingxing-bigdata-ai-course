@@ -1,0 +1,5 @@
+# 大数据与人工智能课程 —— Python 第三方依赖
+# 安装方式（在仓库根目录执行）：
+#   pip install -r requirements.txt
+# 如使用虚拟环境，请先创建并激活 venv 再安装。
+numpy>=1.26

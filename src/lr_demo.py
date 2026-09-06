@@ -1,7 +1,8 @@
 """最小二乘线性回归演示：y = a*x + b
 
-运行：python3.12 lr_demo.py
-依赖：pip install numpy
+依赖 numpy（未安装时在仓库根目录执行 pip install -r requirements.txt）
+运行（Windows 用 python，macOS/Linux 用 python3）：
+    python src/lr_demo.py
 """
 import numpy as np
 

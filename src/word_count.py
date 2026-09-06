@@ -1,8 +1,8 @@
 """简易词频统计（教学版 MapReduce 思路）。
 
-用法：
-    python3.12 word_count.py < input.txt
-    echo "AI is fun. AI is powerful." | python3.12 word_count.py
+用法（Windows 用 python，macOS/Linux 用 python3）：
+    python word_count.py < input.txt
+    echo "AI is fun. AI is powerful." | python word_count.py
 """
 from collections import Counter
 import re

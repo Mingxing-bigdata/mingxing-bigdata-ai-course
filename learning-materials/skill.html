@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>概念学习 · Agent Skill（技能）</title>
+<style>
+  :root{
+    --bg:#f4f5fb; --card:#fff; --ink:#1b2130; --sub:#5d6678;
+    --pri:#4f46e5; --pri2:#9333ea; --line:#e5e8f2;
+    --ok:#10b981; --bad:#ef4444; --chip:#eef1ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+    background:linear-gradient(165deg,#eaeefc 0%,var(--bg) 45%);color:var(--ink);
+    line-height:1.75;padding:26px 14px 70px}
+  .wrap{max-width:860px;margin:0 auto}
+  header{text-align:center;padding:8px 8px 2px}
+  .kicker{display:inline-flex;gap:8px;align-items:center;background:var(--chip);color:var(--pri);
+    font-weight:700;padding:6px 15px;border-radius:999px;font-size:13px}
+  h1{font-size:30px;margin:14px 0 6px;letter-spacing:.4px}
+  .grad{background:linear-gradient(90deg,#4f46e5,#9333ea,#0ea5e9);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--sub);font-size:14.5px}
+  .meta{margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .pill{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 13px;
+    font-size:12.5px;font-weight:600}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:20px 24px;margin-top:16px;box-shadow:0 5px 18px rgba(20,30,80,.05)}
+  .card>h2{font-size:18px;color:#4338ca;display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .card>h2 .n{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;min-width:27px;
+    height:27px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;
+    font-size:13px;flex:none}
+  p.sec{margin:8px 0;font-size:15px}
+  ul,ol{margin:8px 0 8px 22px;font-size:14.5px}
+  li{margin:5px 0}
+  .def{background:linear-gradient(135deg,#f4f3ff,#eef7ff);border-left:4px solid var(--pri);
+    padding:12px 16px;border-radius:0 12px 12px 0;font-size:15.5px;font-weight:700;margin:10px 0}
+  .note{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:10px;
+    padding:9px 14px;font-size:13px;margin:8px 0}
+  .g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:11px;margin-top:10px}
+  .mini{background:#fafbff;border:1px dashed #ccd3ec;border-radius:12px;padding:10px 13px}
+  .mini b{display:block;color:#4338ca;font-size:13.5px;margin-bottom:2px}
+  .mini span{font-size:12.5px;color:var(--sub)}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+  th,td{border:1px solid var(--line);padding:7px 11px;text-align:left;vertical-align:top}
+  th{background:#f1f2ff;color:#4338ca}
+  code{font-family:Consolas,"JetBrains Mono",monospace;background:#eef0f9;border-radius:5px;
+    padding:1px 6px;font-size:.9em;color:#5b21b6}
+  pre{background:#141a2e;color:#e5e9ff;border-radius:12px;padding:13px 16px;font-size:13px;
+    overflow-x:auto;line-height:1.6;margin:10px 0}
+  details{background:#fafbff;border:1px solid var(--line);border-radius:12px;padding:8px 14px;
+    margin:8px 0;font-size:14px}
+  summary{cursor:pointer;font-weight:700;color:#4338ca}
+  details .ans{margin-top:6px;padding-top:6px;border-top:1px dashed var(--line);color:var(--sub);
+    font-size:13.5px}
+  .src{list-style:none;margin-top:6px}
+  .src li{background:#fbfbff;border:1px solid var(--line);border-radius:10px;padding:8px 13px;
+    margin:6px 0;font-size:13.5px}
+  .src a{color:#4f46e5;text-decoration:none;font-weight:600;word-break:break-all}
+  .src a:hover{text-decoration:underline}
+  .tag{display:inline-block;font-size:11px;font-weight:700;color:#fff;border-radius:5px;
+    padding:1px 8px;margin-right:8px}
+  .t-ok{background:#059669}
+  nav.links{margin-top:20px;text-align:center;font-size:13px}
+  nav.links a{color:#4f46e5;text-decoration:none;font-weight:600;margin:0 8px}
+  footer{text-align:center;margin-top:20px;color:var(--sub);font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="kicker">🧠 概念学习 · 由 concept-learner Skill 生成</span>
+  <h1>概念：<span class="grad">Agent Skill（技能）</span></h1>
+  <div class="sub">学习目标 → 我的解释 → 核心机制 → 应用场景 → 易混淆与边界 → 自测 → 资料来源</div>
+  <div class="meta">
+    <span class="pill">📅 2026-09-06</span>
+    <span class="pill">📚 来源已核验</span>
+    <span class="pill">✏️ 个人解释待改写</span>
+  </div>
+</header>
+
+<div class="card">
+  <h2><span class="n">0</span> 学习目标</h2>
+  <ul>
+    <li>能说清 Skill 是什么、一个 Skill 内部由哪些部分组成</li>
+    <li>能解释 description 字段为什么是“触发开关”</li>
+    <li>能区分 Skill 与提示词、Skill 与工具（MCP / Function Calling）</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2><span class="n">1</span> 我的解释（个人理解）</h2>
+  <div class="def">Skill = 把“某类任务怎么做才专业”沉淀成的一份<b>说明书文件夹</b>（核心是 SKILL.md，可附脚本与参考资料）。Agent 平时只知道它的简介，遇到匹配任务时才把说明书完整读入、照着执行——于是同一个通用 Agent 面对不同专业任务都能“立刻变得专业”，这套方法还能随仓库反复复用、共享给任何人。</div>
+  <div class="note">📝 提交前请把上面这段话改写成你自己的表达（课程要求：概念解释不得整段照搬 AI 结果）。</div>
+</div>
+
+<div class="card">
+  <h2><span class="n">2</span> 核心机制 / 组成</h2>
+<pre>skill-name/
+├── SKILL.md      # ★ 技能说明书：frontmatter 元信息 + 分步做法（必备）
+├── scripts/      #   可复用脚本（Python/Shell，可选，保证确定性执行）
+├── references/   #   参考资料/模板（可选，按需读入，不占上下文）
+└── assets/       #   图标、示例文件（可选）</pre>
+  <div class="g2">
+    <div class="mini"><b>🎯 description＝触发开关</b><span>frontmatter 中写清“何时用、何时别用”，Agent 靠它判断是否加载</span></div>
+    <div class="mini"><b>📥 按需加载（渐进披露）</b><span>平时只暴露一小段 description；匹配成功才读 SKILL.md，用到什么再读什么</span></div>
+    <div class="mini"><b>📋 正文＝稳定流程</b><span>把“步骤＋规范＋自检清单”写成可执行方法，保证输出质量一致</span></div>
+  </div>
+</div>
+
+<div class="card">
+  <h2><span class="n">3</span> 一个具体应用场景</h2>
+  <p class="sec"><b>场景（本仓库的活例子）：把“如何学懂一个抽象概念”做成 concept-learner 这个 Skill。</b></p>
+  <ol>
+    <li>你提出“帮我搞懂 XX 概念”；</li>
+    <li>Agent 读到各 Skill 的 description，发现 concept-learner 匹配“概念学习”；</li>
+    <li>加载其 SKILL.md，按“澄清 → 一句话理解 → 拆机制 → 找案例 → 辨析 → 自测 → 查来源”的流程执行；</li>
+    <li>产出同构的概念学习卡（本仓库 learning-materials/ 下的资料就是这样生成的）。</li>
+  </ol>
+  <p class="sec">换个新概念（如“数据倾斜”“布隆过滤器”），同一份 Skill 无需修改即可再用——这就是“沉淀复用”。</p>
+</div>
+
+<div class="card">
+  <h2><span class="n">4</span> 易混淆与使用边界</h2>
+  <table>
+    <tr><th>对比对象</th><th>关键区别</th></tr>
+    <tr><td>vs 临时写一大段提示词</td><td>提示词每次重写、容易漏；Skill 把最佳流程<b>一次沉淀、反复复用、可版本管理、可随仓库共享</b>。提示词像口头交代，Skill 像交给团队的 SOP 文档。</td></tr>
+    <tr><td>vs MCP / Function Calling（工具）</td><td>工具是 Agent 的<b>“手脚”</b>（能做什么外部动作）；Skill 是<b>“方法论”</b>（怎么做才专业）。两者配合：Skill 规定流程，工具负责执行。</td></tr>
+    <tr><td>vs 知识库 / RAG</td><td>知识库提供“事实数据”，Skill 提供“做事步骤”：一个告诉 Agent“知道什么”，一个告诉它“怎么做”。</td></tr>
+  </table>
+  <p class="sec"><b>不该做的事</b>：一个 Skill 塞太多职责（应单一职责）；description 写太模糊（会导致漏用/误用）；Skill 里带的脚本要先审查再执行（它会获得真实权限）。</p>
+</div>
+
+<div class="card">
+  <h2><span class="n">5</span> 自测问题（先想再点开）</h2>
+  <details><summary>Q1：SKILL.md 的哪个字段决定 Agent“何时触发”这个技能？</summary>
+    <div class="ans">frontmatter 的 description——写清适用场景与触发词，是“对号入座”的依据。</div></details>
+  <details><summary>Q2：Skill 平时会一直占用上下文吗？</summary>
+    <div class="ans">不会。平时只暴露短小的 description，匹配成功才按需加载正文与资源（渐进披露）。</div></details>
+  <details><summary>Q3：Skill 和 MCP 工具的分工是什么？</summary>
+    <div class="ans">工具＝执行外部动作的“手脚”，Skill＝规定专业流程的“方法论”，二者配合而非替代。</div></details>
+  <details><summary>Q4：给“做 PPT”写一个 Skill，第一步最该写好什么？</summary>
+    <div class="ans">description（何时用/何时别用/触发词），否则 Agent 可能根本不会在正确时机加载它。</div></details>
+</div>
+
+<div class="card">
+  <h2><span class="n">6</span> 资料来源（可核查）</h2>
+  <ol class="src">
+    <li><span class="tag t-ok">已核验</span><a href="https://code.claude.com/docs/zh-CN/skills" target="_blank">Claude Code：使用 Skills 扩展 Claude（官方中文文档）</a> —— SKILL.md 写法、存放位置、frontmatter 规范（核验于 2026-09-06）</li>
+    <li><span class="tag t-ok">已核验</span><a href="https://github.com/anthropics/skills" target="_blank">anthropics/skills（官方开源示例仓库）</a> —— Agent Skills 规范与大量可参考的真实技能示例（核验于 2026-09-06）</li>
+  </ol>
+</div>
+
+<nav class="links">
+  <a href="concept-relationship.html">下一篇：三概念关系 →</a> ·
+  <a href="agent.html">Agent</a> ·
+  <a href="llm-context.html">大模型的上下文</a>
+</nav>
+<footer>concept-learner · 大数据与人工智能课程</footer>
+</div>
+</body>
+</html>

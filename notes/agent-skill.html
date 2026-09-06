@@ -331,19 +331,21 @@ const LVL_COLOR = {1:"lvl-l1",2:"lvl-l2",3:"lvl-l3"};
 let level=1, score=0, asked=0, current=null, used=[];
 
 function pickQ(){
-  // 优先从当前层抽未答题，取不到则退向相邻层
-  for(let delta=0; delta<=2; delta++){
-    const pool = BANK[level]||[];
-    const cand = pool.filter((_,i)=>!used.includes(''+level+'_'+i));
-    if(cand.length) { const i = pool.indexOf(cand[0]); used.push(''+level+'_'+i); return pool[i]; }
-    if(delta===0){ // 相邻层兜底
-      const alt = level>1 ? 1 : 2; // 简化：尝试回退层或上升层
-      const pool2=BANK[alt]||[];
-      const cand2=pool2.filter((_,i)=>!used.includes(''+alt+'_'+i));
-      if(cand2.length){ const i=pool2.indexOf(cand2[0]); used.push(''+alt+'_'+i); return pool2[i]; }
+  // 从当前层向两侧逐层扩散，取“仍有未答题目的最近层”，
+  // 避免某层题目耗尽时提前结束，也避免只兜底固定层级漏掉相邻层。
+  const lvKeys = Object.keys(BANK).map(Number);
+  const minLv = Math.min(...lvKeys), maxLv = Math.max(...lvKeys);
+  const span = Math.max(level - minLv, maxLv - level);
+  for(let d = 0; d <= span; d++){
+    const candLvs = d === 0 ? [level] : [level - d, level + d]; // 同距离先低层后高层
+    for(const lv of candLvs){
+      if(lv < minLv || lv > maxLv || !BANK[lv]) continue;
+      const pool = BANK[lv];
+      const idx = pool.findIndex((_, i) => !used.includes(lv + '_' + i));
+      if(idx >= 0){ used.push(lv + '_' + idx); return pool[idx]; }
     }
   }
-  return null;
+  return null; // 所有层的题目已全部用完（10 题内不会发生）
 }
 
 function showQ(){
