@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>概念学习 · 反思机制（Reflexion）</title>
+<style>
+  :root{
+    --bg:#f4f5fb; --card:#fff; --ink:#1b2130; --sub:#5d6678;
+    --pri:#4f46e5; --pri2:#9333ea; --line:#e5e8f2;
+    --ok:#10b981; --bad:#ef4444; --chip:#eef1ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+    background:linear-gradient(165deg,#eaeefc 0%,var(--bg) 45%);color:var(--ink);
+    line-height:1.75;padding:26px 14px 70px}
+  .wrap{max-width:860px;margin:0 auto}
+  header{text-align:center;padding:8px 8px 2px}
+  .kicker{display:inline-flex;gap:8px;align-items:center;background:var(--chip);color:var(--pri);
+    font-weight:700;padding:6px 15px;border-radius:999px;font-size:13px}
+  h1{font-size:30px;margin:14px 0 6px;letter-spacing:.4px}
+  .grad{background:linear-gradient(90deg,#4f46e5,#9333ea,#0ea5e9);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--sub);font-size:14.5px}
+  .meta{margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .pill{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 13px;
+    font-size:12.5px;font-weight:600}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:20px 24px;margin-top:16px;box-shadow:0 5px 18px rgba(20,30,80,.05)}
+  .card>h2{font-size:18px;color:#4338ca;display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .card>h2 .n{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;min-width:27px;
+    height:27px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;
+    font-size:13px;flex:none}
+  p.sec{margin:8px 0;font-size:15px}
+  ul,ol{margin:8px 0 8px 22px;font-size:14.5px}
+  li{margin:5px 0}
+  .def{background:linear-gradient(135deg,#f4f3ff,#eef7ff);border-left:4px solid var(--pri);
+    padding:12px 16px;border-radius:0 12px 12px 0;font-size:15.5px;font-weight:700;margin:10px 0}
+  .note{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:10px;
+    padding:9px 14px;font-size:13px;margin:8px 0}
+  .g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:11px;margin-top:10px}
+  .mini{background:#fafbff;border:1px dashed #ccd3ec;border-radius:12px;padding:10px 13px}
+  .mini b{display:block;color:#4338ca;font-size:13.5px;margin-bottom:2px}
+  .mini span{font-size:12.5px;color:var(--sub)}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+  th,td{border:1px solid var(--line);padding:7px 11px;text-align:left;vertical-align:top}
+  th{background:#f1f2ff;color:#4338ca}
+  code{font-family:Consolas,"JetBrains Mono",monospace;background:#eef0f9;border-radius:5px;
+    padding:1px 6px;font-size:.9em;color:#5b21b6}
+  details{background:#fafbff;border:1px solid var(--line);border-radius:12px;padding:8px 14px;
+    margin:8px 0;font-size:14px}
+  summary{cursor:pointer;font-weight:700;color:#4338ca}
+  details .ans{margin-top:6px;padding-top:6px;border-top:1px dashed var(--line);color:var(--sub);
+    font-size:13.5px}
+  .src{list-style:none;margin-top:6px}
+  .src li{background:#fbfbff;border:1px solid var(--line);border-radius:10px;padding:8px 13px;
+    margin:6px 0;font-size:13.5px}
+  .src a{color:#4f46e5;text-decoration:none;font-weight:600;word-break:break-all}
+  .src a:hover{text-decoration:underline}
+  .tag{display:inline-block;font-size:11px;font-weight:700;color:#fff;border-radius:5px;
+    padding:1px 8px;margin-right:8px}
+  .t-ok{background:#059669}
+  nav.links{margin-top:20px;text-align:center;font-size:13px}
+  nav.links a{color:#4f46e5;text-decoration:none;font-weight:600;margin:0 8px}
+  footer{text-align:center;margin-top:20px;color:var(--sub);font-size:12px}
+  /* —— 反思循环图（纯 CSS 可视化）—— */
+  .refl{background:#101b27;border-radius:16px;padding:18px;margin:12px 0;overflow-x:auto}
+  .refl .loop{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap;justify-content:center}
+  .refl .step{border-radius:11px;padding:11px 12px;min-width:96px;flex:1 1 96px;text-align:center;color:#fff}
+  .refl .step b{display:block;font-size:12.5px}
+  .refl .step small{display:block;opacity:.88;font-weight:400;font-size:11px;margin-top:3px}
+  .refl .r1{background:#ef4444}.refl .r2{background:#f59e0b}.refl .r3{background:#8b5cf6}
+  .refl .r4{background:#0ea5e9}.refl .r5{background:#10b981}
+  .refl .arrow{display:flex;align-items:center;color:#fca5a5;font-weight:800;font-size:17px;flex:0 0 auto}
+  .refl .back{margin-top:10px;background:rgba(255,255,255,.10);border:1px dashed #f0abfc;
+    border-radius:10px;padding:8px 12px;color:#fae8ff;font-size:12.5px;text-align:center}
+  .refl .back b{color:#fff}
+  .refl .note2{color:#8b93b8;font-size:11.5px;text-align:center;margin-top:6px}
+  /* —— 选择题测验（可视化交互）—— */
+  .quiz{margin-top:6px}
+  .qbar{display:flex;justify-content:space-between;align-items:center;gap:10px;
+    background:linear-gradient(135deg,#eef2ff,#f5f3ff);border:1px solid var(--line);
+    border-radius:12px;padding:10px 14px;font-weight:700;color:#4338ca}
+  .qbar .reset{cursor:pointer;font-size:12.5px;background:#fff;border:1px solid var(--pri);
+    color:var(--pri);border-radius:8px;padding:4px 12px;font-weight:700}
+  .q{background:#fafbff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0}
+  .q .qt{font-weight:700;font-size:14.5px;margin-bottom:9px}
+  .q .qt b{color:var(--pri)}
+  .opts{display:grid;gap:8px}
+  .opt{cursor:pointer;border:1px solid #c7cef0;background:#fff;border-radius:10px;padding:9px 13px;
+    font-size:14px;text-align:left;transition:.15s;display:flex;gap:9px;align-items:flex-start}
+  .opt:hover{border-color:var(--pri);background:#f3f5ff}
+  .opt .mk{font-weight:800;color:var(--sub);flex:none}
+  .opt.correct{background:#ecfdf5;border-color:var(--ok);color:#065f46}
+  .opt.correct .mk{color:var(--ok)}
+  .opt.wrong{background:#fef2f2;border-color:var(--bad);color:#991b1b}
+  .opt.wrong .mk{color:var(--bad)}
+  .opt:disabled{cursor:default}
+  .opt.dim{opacity:.55}
+  .exp{margin-top:9px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;
+    padding:9px 13px;font-size:13.5px;color:#92400e;display:none}
+  .exp.show{display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="kicker">🔁 概念学习 · 由 concept-learner Skill 生成</span>
+  <h1>概念：<span class="grad">反思机制（Reflexion）</span></h1>
+  <div class="sub">学习目标 → 一句话理解 → 核心机制 → 应用场景 → 易混淆与边界 → 自测 → 选择题 → 资料来源</div>
+  <div class="meta">
+    <span class="pill">📅 2026-09-10</span>
+    <span class="pill">📚 来源已核验</span>
+    <span class="pill">🤖 AI 通俗版</span>
+  </div>
+</header>
+
+<div class="card">
+  <h2><span class="n">0</span> 学习目标</h2>
+  <ul>
+    <li>能说清"反思机制"是什么、它和传统强化学习（改权重）有何不同</li>
+    <li>能讲出 Reflexion 的闭环：尝试 → 反馈 → 用语言反思 → 存入情景记忆 → 再尝试</li>
+    <li>能区分 Reflexion（带外部记忆）与 Self-Refine（无状态自我迭代），及其适用边界</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2><span class="n">1</span> 一句话通俗理解（AI 生成）</h2>
+  <div class="def">反思机制就是让 Agent 干完一件事、发现搞砸了之后，"用人类的话把经验教训写下来"，下次遇到类似情况先读一遍再动手——而不是去改大脑结构。它不像传统训练那样去调模型权重，而是把"我刚才哪步错了、下次该怎么做"写成一段自然语言，存进一个外部记忆缓冲；下一轮把这段反思一并读进来，于是越做越对。Self-Refine 是更轻量的版本：同一个模型先出初稿，再自己给反馈、自己改，来回几轮直到更好。</div>
+</div>
+
+<div class="card">
+  <h2><span class="n">2</span> 核心机制 / 组成</h2>
+  <div class="refl">
+    <div class="loop">
+      <div class="step r1"><b>① 尝试 Trial</b><small>执行任务</small></div>
+      <span class="arrow">→</span>
+      <div class="step r2"><b>② 反馈 Feedback</b><small>成功 / 失败信号</small></div>
+      <span class="arrow">→</span>
+      <div class="step r3"><b>③ 反思 Reflect</b><small>写自然语言总结</small></div>
+      <span class="arrow">→</span>
+      <div class="step r4"><b>④ 存情景记忆</b><small>episodic buffer</small></div>
+      <span class="arrow">→</span>
+      <div class="step r5"><b>⑤ 再尝试</b><small>带着教训改进</small></div>
+    </div>
+    <div class="back"><b>🔄 闭环</b>：反思文字写回记忆，下一轮任务时与上下文一起读入，形成"不靠改权重、只靠语言反馈"的持续改进。</div>
+    <div class="note2">Reflexion 是"言语强化学习（verbal RL）"：奖励信号被转成文字反思，而非用来更新参数。</div>
+  </div>
+  <div class="g2">
+    <div class="mini"><b>🗣 言语化反思</b><span>把"为什么失败"写成人类能读的句子，而不是数值梯度；模型下一轮读懂即可避开同类错误。</span></div>
+    <div class="mini"><b>🧠 情景记忆缓冲</b><span>Reflexion 用外部 buffer 存反思文本，跨轮持久；这是它与一次性 Self-Refine 的关键区别。</span></div>
+    <div class="mini"><b>⚖️ 不改权重</b><span>传统 RL 改模型参数；Reflexion 保持模型冻结，仅用"文字反馈 + 记忆"引导，更安全、可解释。</span></div>
+    <div class="mini"><b>🔁 Self-Refine</b><span>无外部记忆的轻量版：同一模型先出初稿 → 自评反馈 → 自我精炼，迭代多轮。</span></div>
+  </div>
+  <p class="sec">代表工作：Reflexion（Shinn et al., 2023）提出用语言反馈 + 情景记忆缓冲让 Agent 从失败中复用教训，在决策 / 编程 / 推理任务上明显提升；Self-Refine（Madaan et al., 2023）证明同一个模型仅靠"自我反馈 + 迭代"就能改进初稿，无需额外训练。</p>
+</div>
+
+<div class="card">
+  <h2><span class="n">3</span> 一个具体应用场景</h2>
+  <p class="sec"><b>代码生成 Agent 修 Bug（灵感来自 Reflexion 的编程实验）。</b></p>
+  <ol>
+    <li><b>第 1 轮</b>：Agent 写了一段代码，跑测试失败，得到错误栈（反馈）；</li>
+    <li><b>反思</b>：它总结"我漏了空指针判断，导致第 3 行崩溃"，把这句话写进情景记忆；</li>
+    <li><b>第 2 轮</b>：重新读任务时，把上轮反思一起读入，主动补上空指针检查；</li>
+    <li><b>结果</b>：测试通过——它没有被重训，只是"读了自己的错题本"就改对了。</li>
+  </ol>
+  <p class="sec">没有反思机制，它每一轮都从零瞎试；有了反思，它把一次失败变成了可复用的经验。</p>
+</div>
+
+<div class="card">
+  <h2><span class="n">4</span> 易混淆与使用边界</h2>
+  <table>
+    <tr><th>对比对象</th><th>关键区别</th></tr>
+    <tr><td>vs 传统强化学习（RLHF 等）</td><td>RL 用奖励<strong>更新模型权重</strong>；Reflexion 保持权重冻结，只用<strong>语言反思 + 外部记忆</strong>引导，可解释、不破坏原模型。</td></tr>
+    <tr><td>vs Self-Refine</td><td>Self-Refine 是<strong>无状态</strong>的自我迭代（同一轮内反复改）；Reflexion 把反思<strong>存进跨轮情景记忆</strong>，能累积长期经验。</td></tr>
+    <tr><td>vs Agent 记忆（另一卡片）</td><td>反思是记忆系统的"③ 反思"环节之一；它专门负责把经历<strong>提炼成可复用教训</strong>，再写回长期/情景记忆。</td></tr>
+  </table>
+  <p class="sec"><b>不该做的事</b>：在完全无反馈信号的任务上硬套反思（没"对错"就无东西可反思）；反思写得太笼统（"我错了"＝没用，要具体到可行动）；忽视反思占用的上下文与 token 成本；把反思当万能、替代必要的检索与规划。</p>
+</div>
+
+<div class="card">
+  <h2><span class="n">5</span> 自测问题（先想再点开）</h2>
+  <details><summary>Q1：Reflexion 最大的特点是什么？</summary>
+    <div class="ans">不改模型权重，而是让 Agent 把失败经验写成自然语言反思、存进情景记忆，下一轮读入后改进——"言语强化学习"。</div></details>
+  <details><summary>Q2：Reflexion 与 Self-Refine 的核心差别？</summary>
+    <div class="ans">Reflexion 有跨轮外部情景记忆可累积经验；Self-Refine 是同一模型在一轮内反复自评自改，无长期记忆。</div></details>
+  <details><summary>Q3：为什么反思要"写成文字"而不是数值？</summary>
+    <div class="ans">文字反思可被模型直接读懂、可解释、可跨任务复用，且不必改动参数；模型本就擅长理解语言。</div></details>
+  <details><summary>Q4：反思机制适合什么任务？</summary>
+    <div class="ans">有清晰成败反馈、需要"从失败中迭代改进"的多步任务（决策、编程、推理）；纯一次性无反馈任务收益有限。</div></details>
+</div>
+
+<div class="card">
+  <h2><span class="n">6</span> 选择题测验（点选项看解析）</h2>
+  <div class="quiz" id="quiz-refl"></div>
+  <script>
+  const QA_REFL = [
+    {q:"反思机制（Reflexion）的核心思想最接近哪句？",
+     opts:["通过重训、修改模型权重来学习",
+           "让 Agent 把“我刚才哪错了、下次咋办”写成自然语言，存进记忆，下次读入后避开",
+           "直接删掉模型重来",
+           "完全随机重试，不总结任何经验"],
+     ans:1,
+     exp:"Reflexion 的关键是不动权重，仅用“语言反馈（verbal feedback）”写反思、存情景记忆，下一轮带着教训改进——即言语强化学习。"},
+    {q:"Reflexion 与传统强化学习（RL）最大的不同是？",
+     opts:["它必须重训整个大模型",
+           "它只用于玩游戏",
+           "它不改模型权重，只靠语言反思 + 记忆来引导",
+           "两者没有任何区别"],
+     ans:2,
+     exp:"RL 用奖励更新参数；Reflexion 让模型冻结，仅靠写下的反思文本与记忆来纠正行为，更安全、可解释。"},
+    {q:"Reflexion 里的“情景记忆缓冲（episodic memory buffer）”起什么作用？",
+     opts:["存放模型权重副本",
+           "存放图片素材",
+           "存放中间思考的反思文字，供后续任务回看以持续改进",
+           "没有任何作用"],
+     ans:2,
+     exp:"缓冲里存的是历次反思的自然语言记录；后续任务把它读回上下文，Agent 就能复用过去的教训，实现跨轮学习。"},
+    {q:"Self-Refine 的核心做法是？",
+     opts:["必须换一个更大的模型来改稿",
+           "只生成一次就结束，不可修改",
+           "同一模型先出初稿，再自己给反馈并迭代精炼",
+           "需要人工逐字修改每一稿"],
+     ans:2,
+     exp:"Self-Refine 让同一模型当“生成器+评审+修改者”：初稿→自反馈→自精炼，循环多轮，无需额外训练或外部记忆。"},
+    {q:"关于反思机制的使用边界，哪句是对的？",
+     opts:["任何任务套上反思都一定更好",
+           "有清晰成败反馈的多步任务最受益；无反馈则没东西可反思",
+           "反思文字越笼统（“我错了”）效果越好",
+           "反思可以完全替代检索与规划"],
+     ans:1,
+     exp:"反思需要可判定的反馈信号才有内容可总结；且反思要具体可行动、并配合检索/规划使用，不是万能替代品。"}
+  ];
+  (function(){
+    const root=document.getElementById('quiz-refl');
+    const bar=document.createElement('div'); bar.className='qbar';
+    const scoreEl=document.createElement('span'); scoreEl.textContent='得分：0 / '+QA_REFL.length;
+    const reset=document.createElement('button'); reset.className='reset'; reset.textContent='重置';
+    bar.appendChild(scoreEl); bar.appendChild(reset); root.appendChild(bar);
+    let score=0;
+    QA_REFL.forEach((item, qi)=>{
+      const card=document.createElement('div'); card.className='q';
+      const qt=document.createElement('div'); qt.className='qt';
+      qt.innerHTML='<b>Q'+(qi+1)+'：</b>'+item.q; card.appendChild(qt);
+      const opts=document.createElement('div'); opts.className='opts';
+      const exp=document.createElement('div'); exp.className='exp'; exp.textContent='💡 '+item.exp;
+      let answered=false;
+      item.opts.forEach((o,oi)=>{
+        const b=document.createElement('button'); b.className='opt';
+        b.innerHTML='<span class="mk">'+(String.fromCharCode(65+oi))+'</span><span>'+o+'</span>';
+        b.onclick=function(){
+          if(answered) return; answered=true;
+          if(oi===item.ans){ b.classList.add('correct'); score++; }
+          else { b.classList.add('wrong'); opts.children[item.ans].classList.add('correct'); }
+          Array.from(opts.children).forEach((c,i)=>{ if(i!==item.ans) c.classList.add('dim'); c.disabled=true; });
+          scoreEl.textContent='得分：'+score+' / '+QA_REFL.length;
+          exp.classList.add('show');
+        };
+        opts.appendChild(b);
+      });
+      card.appendChild(opts); card.appendChild(exp); root.appendChild(card);
+    });
+    reset.onclick=function(){ location.reload(); };
+  })();
+  </script>
+</div>
+
+<div class="card">
+  <h2><span class="n">7</span> 资料来源（可核查）</h2>
+  <ol class="src">
+    <li><span class="tag t-ok">已核验</span><a href="https://arxiv.org/abs/2303.11366" target="_blank">Shinn N., et al. Reflexion: Language Agents with Verbal Reinforcement Learning. arXiv:2303.11366, 2023.</a> —— 反思机制奠基论文：以语言反馈 + 情景记忆缓冲让 Agent 从失败中复用教训（核验于 2026-09-10）</li>
+    <li><span class="tag t-ok">已核验</span><a href="https://arxiv.org/abs/2303.17651" target="_blank">Madaan A., et al. Self-Refine: Iterative Refinement with Self-Feedback. arXiv:2303.17651, 2023.</a> —— 同一模型自我反馈 + 迭代精炼的代表工作，是反思思想的轻量实现（核验于 2026-09-10）</li>
+    <li><span class="tag t-ok">已核验</span><a href="https://arxiv.org/abs/2308.11432" target="_blank">Wang L., et al. A Survey on Large Language Model based Autonomous Agents. arXiv:2308.11432, 2023.</a> —— 系统综述，含 Agent 反思（Reflection）/ 自我改进模块的分类与定位（核验于 2026-09-10）</li>
+  </ol>
+</div>
+
+<nav class="links">
+  <a href="agent.html">← Agent</a> ·
+  <a href="agent-memory.html">Agent 记忆</a> ·
+  <a href="rag.html">向量检索 / RAG</a> ·
+  <a href="llm-context.html">大模型的上下文</a> ·
+  <a href="skill.html">Skill</a> ·
+  <a href="concept-relationship.html">三概念关系</a>
+</nav>
+<footer>concept-learner · 大数据与人工智能课程</footer>
+</div>
+</body>
+</html>

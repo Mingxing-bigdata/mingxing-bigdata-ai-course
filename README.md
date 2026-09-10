@@ -12,7 +12,7 @@
 | 目录 | 用途 |
 |---|---|
 | `.workbuddy/skills/concept-learner/` | **项目级 Skill**（概念学习资料生成技能） |
-| `learning-materials/` | 概念学习资料（HTML 交互卡：Agent / 上下文 / Skill / Agent 记忆 / 关系图） |
+| `learning-materials/` | 概念学习资料（HTML 交互卡：Agent / 上下文 / Skill / Agent 记忆 / 向量检索·RAG / 反思机制 / 关系图） |
 | `concept-relationship.md` | 三概念关系说明（Markdown 源，含 Mermaid） |
 | `notes/` | 课堂笔记与自学总结 |
 | `assignments/` | 课程作业 |
@@ -57,6 +57,8 @@ SKILL.md 顶部包含 YAML 元数据（`name` / `description`），并明确说�
 - `learning-materials/skill.html` —— 概念：Agent Skill
 - `learning-materials/concept-relationship.html` —— 三概念关系（交互版）
 - `learning-materials/agent-memory.html` —— 概念：Agent 的记忆系统
+- `learning-materials/rag.html` —— 概念：向量检索 / RAG（检索增强生成）
+- `learning-materials/reflection.html` —— 概念：反思机制（Reflexion）
 - `concept-relationship.md` —— 三概念关系（Markdown 源，含 Mermaid 图）
 
 每份概念资料均包含：学习目标、一句话通俗理解（AI 生成）、核心机制/组成、一个具体应用场景、易混淆与使用边界、自测问题、可视化选择题测验、可核查的学术资料来源链接。
@@ -88,6 +90,7 @@ git push                    # 推送到 GitHub
 ## 更新日志
 - v0.3.0：按作业要求将 Skill 调整为**项目级**（`.workbuddy/skills/concept-learner/`）；学习资料改为 HTML 交互卡并移至 `learning-materials/`
 - v0.4.0：新增概念资料 Agent 的记忆系统（`learning-materials/agent-memory.html`），含记忆系统架构图、可视化选择题测验与 arXiv 学术来源；资料来源统一为权威学术文献
+- v0.5.0：新增概念资料 向量检索/RAG（`rag.html`，检索流水线图 + arXiv:2005.11401/2004.04906/2002.08909）与 反思机制（`reflection.html`，反思循环图 + arXiv:2303.11366/2303.17651/2308.11432）；均含可视化选择题测验与学术来源；全部 7 张卡互相导航
 - v0.2.0：新增概念学习作业——可复用 concept-learner Skill、三份概念资料与关系文档；README 补充调用方式与 AI 核查说明
 - v0.1.1：新增 requirements.txt 与依赖安装说明；运行命令改为跨平台写法；修复学习卡抽题逻辑
 - v0.1.0：初始化仓库，搭建课程骨架

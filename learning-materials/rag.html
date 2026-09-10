@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>概念学习 · 向量检索 / RAG</title>
+<style>
+  :root{
+    --bg:#f4f5fb; --card:#fff; --ink:#1b2130; --sub:#5d6678;
+    --pri:#4f46e5; --pri2:#9333ea; --line:#e5e8f2;
+    --ok:#10b981; --bad:#ef4444; --chip:#eef1ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+    background:linear-gradient(165deg,#eaeefc 0%,var(--bg) 45%);color:var(--ink);
+    line-height:1.75;padding:26px 14px 70px}
+  .wrap{max-width:860px;margin:0 auto}
+  header{text-align:center;padding:8px 8px 2px}
+  .kicker{display:inline-flex;gap:8px;align-items:center;background:var(--chip);color:var(--pri);
+    font-weight:700;padding:6px 15px;border-radius:999px;font-size:13px}
+  h1{font-size:30px;margin:14px 0 6px;letter-spacing:.4px}
+  .grad{background:linear-gradient(90deg,#4f46e5,#9333ea,#0ea5e9);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--sub);font-size:14.5px}
+  .meta{margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .pill{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 13px;
+    font-size:12.5px;font-weight:600}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:20px 24px;margin-top:16px;box-shadow:0 5px 18px rgba(20,30,80,.05)}
+  .card>h2{font-size:18px;color:#4338ca;display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .card>h2 .n{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;min-width:27px;
+    height:27px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;
+    font-size:13px;flex:none}
+  p.sec{margin:8px 0;font-size:15px}
+  ul,ol{margin:8px 0 8px 22px;font-size:14.5px}
+  li{margin:5px 0}
+  .def{background:linear-gradient(135deg,#f4f3ff,#eef7ff);border-left:4px solid var(--pri);
+    padding:12px 16px;border-radius:0 12px 12px 0;font-size:15.5px;font-weight:700;margin:10px 0}
+  .note{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:10px;
+    padding:9px 14px;font-size:13px;margin:8px 0}
+  .g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:11px;margin-top:10px}
+  .mini{background:#fafbff;border:1px dashed #ccd3ec;border-radius:12px;padding:10px 13px}
+  .mini b{display:block;color:#4338ca;font-size:13.5px;margin-bottom:2px}
+  .mini span{font-size:12.5px;color:var(--sub)}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+  th,td{border:1px solid var(--line);padding:7px 11px;text-align:left;vertical-align:top}
+  th{background:#f1f2ff;color:#4338ca}
+  code{font-family:Consolas,"JetBrains Mono",monospace;background:#eef0f9;border-radius:5px;
+    padding:1px 6px;font-size:.9em;color:#5b21b6}
+  details{background:#fafbff;border:1px solid var(--line);border-radius:12px;padding:8px 14px;
+    margin:8px 0;font-size:14px}
+  summary{cursor:pointer;font-weight:700;color:#4338ca}
+  details .ans{margin-top:6px;padding-top:6px;border-top:1px dashed var(--line);color:var(--sub);
+    font-size:13.5px}
+  .src{list-style:none;margin-top:6px}
+  .src li{background:#fbfbff;border:1px solid var(--line);border-radius:10px;padding:8px 13px;
+    margin:6px 0;font-size:13.5px}
+  .src a{color:#4f46e5;text-decoration:none;font-weight:600;word-break:break-all}
+  .src a:hover{text-decoration:underline}
+  .tag{display:inline-block;font-size:11px;font-weight:700;color:#fff;border-radius:5px;
+    padding:1px 8px;margin-right:8px}
+  .t-ok{background:#059669}
+  nav.links{margin-top:20px;text-align:center;font-size:13px}
+  nav.links a{color:#4f46e5;text-decoration:none;font-weight:600;margin:0 8px}
+  footer{text-align:center;margin-top:20px;color:var(--sub);font-size:12px}
+  /* —— RAG 流水线图（纯 CSS 可视化）—— */
+  .rag{background:#0f1b2d;border-radius:16px;padding:18px;margin:12px 0;overflow-x:auto}
+  .rag .pipe{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap;justify-content:center}
+  .rag .step{border-radius:11px;padding:11px 13px;min-width:104px;flex:1 1 104px;text-align:center;color:#fff}
+  .rag .step b{display:block;font-size:13px}
+  .rag .step small{display:block;opacity:.88;font-weight:400;font-size:11px;margin-top:3px}
+  .rag .s1{background:#0ea5e9}.rag .s2{background:#6366f1}.rag .s3{background:#8b5cf6}
+  .rag .s4{background:#7c3aed}.rag .s5{background:#059669}
+  .rag .arrow{display:flex;align-items:center;color:#7dd3fc;font-weight:800;font-size:17px;flex:0 0 auto}
+  .rag .kb{margin-top:10px;background:rgba(255,255,255,.10);border:1px dashed #93c5fd;
+    border-radius:10px;padding:9px 12px;color:#dbeafe;font-size:12.5px;text-align:center}
+  .rag .kb b{color:#fff}
+  .rag .note2{color:#8b93b8;font-size:11.5px;text-align:center;margin-top:6px}
+  /* —— 选择题测验（可视化交互）—— */
+  .quiz{margin-top:6px}
+  .qbar{display:flex;justify-content:space-between;align-items:center;gap:10px;
+    background:linear-gradient(135deg,#eef2ff,#f5f3ff);border:1px solid var(--line);
+    border-radius:12px;padding:10px 14px;font-weight:700;color:#4338ca}
+  .qbar .reset{cursor:pointer;font-size:12.5px;background:#fff;border:1px solid var(--pri);
+    color:var(--pri);border-radius:8px;padding:4px 12px;font-weight:700}
+  .q{background:#fafbff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0}
+  .q .qt{font-weight:700;font-size:14.5px;margin-bottom:9px}
+  .q .qt b{color:var(--pri)}
+  .opts{display:grid;gap:8px}
+  .opt{cursor:pointer;border:1px solid #c7cef0;background:#fff;border-radius:10px;padding:9px 13px;
+    font-size:14px;text-align:left;transition:.15s;display:flex;gap:9px;align-items:flex-start}
+  .opt:hover{border-color:var(--pri);background:#f3f5ff}
+  .opt .mk{font-weight:800;color:var(--sub);flex:none}
+  .opt.correct{background:#ecfdf5;border-color:var(--ok);color:#065f46}
+  .opt.correct .mk{color:var(--ok)}
+  .opt.wrong{background:#fef2f2;border-color:var(--bad);color:#991b1b}
+  .opt.wrong .mk{color:var(--bad)}
+  .opt:disabled{cursor:default}
+  .opt.dim{opacity:.55}
+  .exp{margin-top:9px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;
+    padding:9px 13px;font-size:13.5px;color:#92400e;display:none}
+  .exp.show{display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="kicker">🔎 概念学习 · 由 concept-learner Skill 生成</span>
+  <h1>概念：<span class="grad">向量检索 / RAG</span></h1>
+  <div class="sub">学习目标 → 一句话理解 → 核心机制 → 应用场景 → 易混淆与边界 → 自测 → 选择题 → 资料来源</div>
+  <div class="meta">
+    <span class="pill">📅 2026-09-10</span>
+    <span class="pill">📚 来源已核验</span>
+    <span class="pill">🤖 AI 通俗版</span>
+  </div>
+</header>
+
+<div class="card">
+  <h2><span class="n">0</span> 学习目标</h2>
+  <ul>
+    <li>能说清 RAG（检索增强生成）是什么、解决大模型哪类痛点</li>
+    <li>能讲出"向量检索"的核心步骤：文本 → 向量（embedding）→ 相似度检索 → 回填上下文</li>
+    <li>能区分 RAG 与传统"只靠参数记忆 / 只靠关键词搜索"的差异，以及它的边界</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2><span class="n">1</span> 一句话通俗理解（AI 生成）</h2>
+  <div class="def">RAG（检索增强生成）就是给大模型配一个"开卷考试的小抄本"：答题前，它先去资料库里翻出最相关的几页，把内容贴到题目旁边，再据此作答。这样它就不必把全世界知识都"背"在脑子里，也能引用最新、私有的外部资料，少说瞎话。而"向量检索"是它快速翻到正确那几页的关键——把文字变成一串数字（向量），意思相近的文字在数字空间里也离得近，一算距离就找回来了。</div>
+</div>
+
+<div class="card">
+  <h2><span class="n">2</span> 核心机制 / 组成</h2>
+  <div class="rag">
+    <div class="pipe">
+      <div class="step s1"><b>① 用户提问</b><small>自然语言问题</small></div>
+      <span class="arrow">→</span>
+      <div class="step s2"><b>② 向量化</b><small>问题 → embedding</small></div>
+      <span class="arrow">→</span>
+      <div class="step s3"><b>③ 向量检索</b><small>相似度取 Top-k</small></div>
+      <span class="arrow">→</span>
+      <div class="step s4"><b>④ 拼进 Prompt</b><small>问题 + 片段</small></div>
+      <span class="arrow">→</span>
+      <div class="step s5"><b>⑤ 大模型生成</b><small>带证据作答</small></div>
+    </div>
+    <div class="kb"><b>📚 外部知识库（向量库）</b>：事先把所有文档切块 → 各自向量化 → 存进向量数据库；检索时只在库里找最相近的片段。</div>
+    <div class="note2">检索质量决定答案质量：检索到无关片段，模型会被带偏；检索准，答案才有据可依。</div>
+  </div>
+  <div class="g2">
+    <div class="mini"><b>🧩 向量化（Embedding）</b><span>用模型把文本转成一串固定长度的数字向量；语义相近的文本向量也相近，便于"按意思找"而非"按字面匹配"。</span></div>
+    <div class="mini"><b>📐 相似度检索</b><span>问题向量与库中每个片段向量比距离（余弦 / 内积），取最近的 k 个拼回上下文。</span></div>
+    <div class="mini"><b>🗂 切块与索引</b><span>长文档切成小段分别向量化并建立索引，检索又快又准；切得太碎或太大都会掉质量。</span></div>
+    <div class="mini"><b>🔁 生成（Generate）</b><span>大模型拿到"问题 + 检索片段"后生成答案，可显式引用证据，减少凭空编造。</span></div>
+  </div>
+  <p class="sec">代表方法：RAG（Lewis et al., NeurIPS 2020）首次把"先检索、再生成"做成统一框架；DPR（Karpukhin et al., EMNLP 2020）提出稠密向量检索，比传统关键词检索更懂语义；REALM（Guu et al., 2020）把检索直接融进预训练，让语言模型"开书答题"。</p>
+</div>
+
+<div class="card">
+  <h2><span class="n">3</span> 一个具体应用场景</h2>
+  <p class="sec"><b>企业内部"知识助手"（如用 RAG 搭的客服 / 文档问答）。</b></p>
+  <ol>
+    <li><b>建库</b>：把公司产品手册、FAQ、历史工单切块并向量化，存进向量库；</li>
+    <li><b>提问</b>：员工问"XX 型号怎么退货"，问题被向量化；</li>
+    <li><b>检索</b>：向量库返回最相关的退货政策片段（Top-k）；</li>
+    <li><b>生成</b>：大模型结合这些片段给出带出处的准确答复，而不是凭"训练记忆"瞎猜。</li>
+  </ol>
+  <p class="sec">没有 RAG，模型要么答不出公司内部信息，要么编造一条看似合理的错误流程——RAG 让它"有据可查"。</p>
+</div>
+
+<div class="card">
+  <h2><span class="n">4</span> 易混淆与使用边界</h2>
+  <table>
+    <tr><th>对比对象</th><th>关键区别</th></tr>
+    <tr><td>vs 纯参数记忆（模型自己背）</td><td>参数记忆是训练时固定的通用知识，<strong>不知道你的最新/私有资料</strong>；RAG 用外部库补上"实时、专属"的部分。</td></tr>
+    <tr><td>vs 传统关键词搜索</td><td>关键词搜索看"字面匹配"；向量检索看"语义相近"，能找回换了个说法但意思一样的文档。</td></tr>
+    <tr><td>vs Agent 记忆（见另一卡片）</td><td>记忆是 Agent 自己存下的个性化经历；RAG 是面向<strong>通用外部知识库</strong>的检索增强，二者常配合：记忆存"你是谁"，RAG 取"世界知识"。</td></tr>
+  </table>
+  <p class="sec"><b>不该做的事</b>：以为"检索越多越准"——塞一堆无关片段只会干扰模型；不维护知识库（过期文档照样被检索）；切块太随意导致语义断裂；用错 embedding 模型使"相似"失真。</p>
+</div>
+
+<div class="card">
+  <h2><span class="n">5</span> 自测问题（先想再点开）</h2>
+  <details><summary>Q1：RAG 里的 "R"（Retrieval）发生在哪一步？</summary>
+    <div class="ans">在生成答案之前：先把与问题最相关的外部文档片段检索出来，再和原问题一起送进大模型。</div></details>
+  <details><summary>Q2：为什么要把文本转成向量（embedding）？</summary>
+    <div class="ans">让"意思相近"的文本在向量空间里也离得近，从而用相似度检索找回"换种说法但同义"的文档，比关键词匹配更语义化。</div></details>
+  <details><summary>Q3：RAG 能完全消除"幻觉"吗？</summary>
+    <div class="ans">不能。它显著降低凭空编造，但检索若出错/缺失，模型仍可能被带偏；知识库需保持准确、及时。</div></details>
+  <details><summary>Q4：向量检索与关键词检索最大区别？</summary>
+    <div class="ans">向量检索按"语义相似度"找，能跨表述；关键词检索按"字面匹配"，换说法就可能漏掉。</div></details>
+</div>
+
+<div class="card">
+  <h2><span class="n">6</span> 选择题测验（点选项看解析）</h2>
+  <div class="quiz" id="quiz-rag"></div>
+  <script>
+  const QA_RAG = [
+    {q:"RAG（检索增强生成）的核心思想最接近下面哪句？",
+     opts:["把模型参数无限增大，什么都背下来",
+           "生成答案前，先从外部知识库检索相关片段拼进上下文再作答",
+           "完全不依赖大模型，只用规则",
+           "只靠用户第一句提示词，其余全靠猜"],
+     ans:1,
+     exp:"RAG = Retrieval-Augmented Generation：先检索（Retrieval）外部相关文档，再增强（Augment）prompt，最后生成（Generation），让答案有据可依。"},
+    {q:"向量检索中，“相似度检索”通常是怎么找到相关片段的？",
+     opts:["只取文档第一句话",
+           "随机抽几条碰运气",
+           "把问题和文档都转成向量，用向量间相似度（余弦/内积）取最近的 k 条",
+           "必须逐字完全相同才匹配"],
+     ans:2,
+     exp:"核心是用 embedding 把文本变成向量，再算问题与候选片段的向量距离，取 Top-k 最相近的——这正是“语义检索”，能跨表述匹配。"},
+    {q:"把文本转成向量（embedding）的主要目的是？",
+     opts:["压缩图片体积",
+           "让“意思相近”的文本在向量空间里也离得近，便于按语义找",
+           "给文本加密",
+           "可有可无，不影响检索"],
+     ans:1,
+     exp:"embedding 把语义编码进向量：含义接近 → 向量接近。这样检索看“意思”而非“字面”，是 RAG 比关键词搜索更懂语义的原因。"},
+    {q:"下面哪篇是 RAG 方向的代表性/开山论文？",
+     opts:["Attention Is All You Need",
+           "ImageNet Classification with Deep CNNs",
+           "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks（Lewis et al., NeurIPS 2020）",
+           "AlphaGo"],
+     ans:2,
+     exp:"Lewis et al. 2020 的 RAG 论文首次把“检索 + 生成”做成统一框架，是这一方向的奠基工作；另可参考 DPR（稠密向量检索）与 REALM（检索融入预训练）。"},
+    {q:"关于 RAG 的边界，哪句是对的？",
+     opts:["RAG 能彻底消除所有幻觉，永远正确",
+           "嵌入(embedding)模型好坏无所谓",
+           "检索质量直接决定答案质量：检索到无关片段会把模型带偏",
+           "知识库永远新鲜，无需任何维护"],
+     ans:2,
+     exp:"RAG 不万能：检索不准/缺失都会拖累答案；embedding 质量、知识库时效都关键。它降低而非杜绝编造。"}
+  ];
+  (function(){
+    const root=document.getElementById('quiz-rag');
+    const bar=document.createElement('div'); bar.className='qbar';
+    const scoreEl=document.createElement('span'); scoreEl.textContent='得分：0 / '+QA_RAG.length;
+    const reset=document.createElement('button'); reset.className='reset'; reset.textContent='重置';
+    bar.appendChild(scoreEl); bar.appendChild(reset); root.appendChild(bar);
+    let score=0;
+    QA_RAG.forEach((item, qi)=>{
+      const card=document.createElement('div'); card.className='q';
+      const qt=document.createElement('div'); qt.className='qt';
+      qt.innerHTML='<b>Q'+(qi+1)+'：</b>'+item.q; card.appendChild(qt);
+      const opts=document.createElement('div'); opts.className='opts';
+      const exp=document.createElement('div'); exp.className='exp'; exp.textContent='💡 '+item.exp;
+      let answered=false;
+      item.opts.forEach((o,oi)=>{
+        const b=document.createElement('button'); b.className='opt';
+        b.innerHTML='<span class="mk">'+(String.fromCharCode(65+oi))+'</span><span>'+o+'</span>';
+        b.onclick=function(){
+          if(answered) return; answered=true;
+          if(oi===item.ans){ b.classList.add('correct'); score++; }
+          else { b.classList.add('wrong'); opts.children[item.ans].classList.add('correct'); }
+          Array.from(opts.children).forEach((c,i)=>{ if(i!==item.ans) c.classList.add('dim'); c.disabled=true; });
+          scoreEl.textContent='得分：'+score+' / '+QA_RAG.length;
+          exp.classList.add('show');
+        };
+        opts.appendChild(b);
+      });
+      card.appendChild(opts); card.appendChild(exp); root.appendChild(card);
+    });
+    reset.onclick=function(){ location.reload(); };
+  })();
+  </script>
+</div>
+
+<div class="card">
+  <h2><span class="n">7</span> 资料来源（可核查）</h2>
+  <ol class="src">
+    <li><span class="tag t-ok">已核验</span><a href="https://arxiv.org/abs/2005.11401" target="_blank">Lewis P., et al. Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks. NeurIPS 2020.</a> —— RAG 框架奠基论文：先检索外部文档再生成，显著降低参数记忆依赖与编造（核验于 2026-09-10）</li>
+    <li><span class="tag t-ok">已核验</span><a href="https://arxiv.org/abs/2004.04906" target="_blank">Karpukhin V., et al. Dense Passage Retrieval for Open-Domain Question Answering. EMNLP 2020.</a> —— 稠密向量检索（DPR），证明语义向量检索显著优于传统稀疏/关键词检索（核验于 2026-09-10）</li>
+    <li><span class="tag t-ok">已核验</span><a href="https://arxiv.org/abs/2002.08909" target="_blank">Guu K., et al. REALM: Retrieval-Augmented Language Model Pre-Training. arXiv:2002.08909, 2020.</a> —— 将检索知识直接融入预训练，让语言模型"开书答题"的代表工作（核验于 2026-09-10）</li>
+  </ol>
+</div>
+
+<nav class="links">
+  <a href="agent.html">← Agent</a> ·
+  <a href="agent-memory.html">Agent 记忆</a> ·
+  <a href="llm-context.html">大模型的上下文</a> ·
+  <a href="skill.html">Skill</a> ·
+  <a href="concept-relationship.html">三概念关系</a>
+</nav>
+<footer>concept-learner · 大数据与人工智能课程</footer>
+</div>
+</body>
+</html>
