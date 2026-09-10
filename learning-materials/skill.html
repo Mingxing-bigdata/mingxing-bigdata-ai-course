@@ -65,6 +65,30 @@
   nav.links{margin-top:20px;text-align:center;font-size:13px}
   nav.links a{color:#4f46e5;text-decoration:none;font-weight:600;margin:0 8px}
   footer{text-align:center;margin-top:20px;color:var(--sub);font-size:12px}
+  /* —— 选择题测验（可视化交互）—— */
+  .quiz{margin-top:6px}
+  .qbar{display:flex;justify-content:space-between;align-items:center;gap:10px;
+    background:linear-gradient(135deg,#eef2ff,#f5f3ff);border:1px solid var(--line);
+    border-radius:12px;padding:10px 14px;font-weight:700;color:#4338ca}
+  .qbar .reset{cursor:pointer;font-size:12.5px;background:#fff;border:1px solid var(--pri);
+    color:var(--pri);border-radius:8px;padding:4px 12px;font-weight:700}
+  .q{background:#fafbff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0}
+  .q .qt{font-weight:700;font-size:14.5px;margin-bottom:9px}
+  .q .qt b{color:var(--pri)}
+  .opts{display:grid;gap:8px}
+  .opt{cursor:pointer;border:1px solid #c7cef0;background:#fff;border-radius:10px;padding:9px 13px;
+    font-size:14px;text-align:left;transition:.15s;display:flex;gap:9px;align-items:flex-start}
+  .opt:hover{border-color:var(--pri);background:#f3f5ff}
+  .opt .mk{font-weight:800;color:var(--sub);flex:none}
+  .opt.correct{background:#ecfdf5;border-color:var(--ok);color:#065f46}
+  .opt.correct .mk{color:var(--ok)}
+  .opt.wrong{background:#fef2f2;border-color:var(--bad);color:#991b1b}
+  .opt.wrong .mk{color:var(--bad)}
+  .opt:disabled{cursor:default}
+  .opt.dim{opacity:.55}
+  .exp{margin-top:9px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;
+    padding:9px 13px;font-size:13.5px;color:#92400e;display:none}
+  .exp.show{display:block}
 </style>
 </head>
 <body>
@@ -73,11 +97,11 @@
 <header>
   <span class="kicker">🧠 概念学习 · 由 concept-learner Skill 生成</span>
   <h1>概念：<span class="grad">Agent Skill（技能）</span></h1>
-  <div class="sub">学习目标 → 我的解释 → 核心机制 → 应用场景 → 易混淆与边界 → 自测 → 资料来源</div>
+  <div class="sub">学习目标 → 一句话理解 → 核心机制 → 应用场景 → 易混淆与边界 → 自测 → 选择题 → 资料来源</div>
   <div class="meta">
     <span class="pill">📅 2026-09-06</span>
     <span class="pill">📚 来源已核验</span>
-    <span class="pill">✅ 已个人化</span>
+    <span class="pill">🤖 AI 通俗版</span>
   </div>
 </header>
 
@@ -91,9 +115,9 @@
 </div>
 
 <div class="card">
-  <h2><span class="n">1</span> 我的解释（个人理解）</h2>
-  <div class="def">Skill 像是给 AI 的岗位培训手册，专门教它怎么把某类活干好。平时 Agent 只大概知道有这手册，真遇到这类任务才翻出来照着做。这样同一套通用 Agent 配上不同 Skill，就能干不同的专业活，写一次还能全仓库、甚至所有人复用。</div>
-  <div class="note">✅ 以上为本人对概念的个人理解（已改写为自己的表达）。</div>
+  <h2><span class="n">1</span> 一句话通俗理解（AI 生成）</h2>
+  <div class="def">Skill（技能）可以理解成给 AI 写的一份“岗位说明书 / 操作手册”。它把“某类活该怎么干才专业”提前写清楚（步骤、规范、自检清单）。平时 AI 只大概知道有这份手册；一旦遇到对口的任务，就把它翻出来照着做。于是同一个通用 AI，配上不同的 Skill，就能胜任不同的专业工作，而且这套手册写一次就能到处复用。</div>
+  <div class="note">🤖 以上为 AI 生成的通俗化解释（应作业要求，替换原“个人理解”版本）。</div>
 </div>
 
 <div class="card">
@@ -146,7 +170,79 @@
 </div>
 
 <div class="card">
-  <h2><span class="n">6</span> 资料来源（可核查）</h2>
+  <h2><span class="n">6</span> 选择题测验（点选项看解析）</h2>
+  <div class="quiz" id="quiz-skill"></div>
+  <script>
+  const QA_SKILL = [
+    {q:"在 WorkBuddy / Claude 的 Skill 里，决定“Agent 什么时候会加载这个技能”的字段是哪个？",
+     opts:["name","description","version","author"],
+     ans:1,
+     exp:"description 写在 frontmatter 中，描述“何时用、何时别用、触发词”，是 Agent 对号入座的触发开关。"},
+    {q:"Skill 平时（还没被触发时）会一直占着 AI 的上下文吗？",
+     opts:["会，正文始终全部加载",
+           "不会，平时只暴露一小段 description，匹配成功才按需加载",
+           "取决于模型大小",
+           "只有付费用户才会加载"],
+     ans:1,
+     exp:"这就是“渐进披露”：平时轻量，命中后才加载 SKILL.md 与资源，既省上下文也更准。"},
+    {q:"Skill 和 MCP / Function Calling（工具）的关系，最恰当的说法是？",
+     opts:["两者完全是一回事",
+           "工具是“手脚”（能做什么外部动作），Skill 是“方法论”（怎么做才专业）",
+           "Skill 更高级，可以完全取代工具",
+           "工具只能在本地电脑上用"],
+     ans:1,
+     exp:"二者配合而非替代：Skill 规定专业流程（方法论），工具负责执行外部动作（手脚）。"},
+    {q:"把“怎么学懂一个概念”做成 concept-learner 这个 Skill 之后，最大的好处是？",
+     opts:["只能用于当前这唯一一个概念",
+           "同一份技能换个新概念也能复用，还能随仓库共享、做版本管理",
+           "会让 AI 变慢很多",
+           "每次都得重新写一大段提示词"],
+     ans:1,
+     exp:"Skill 把最佳实践“一次沉淀、反复复用、可版本管理、可共享”，正是临时提示词做不到的。"},
+    {q:"下面哪个做法会“坑”到 Skill 的效果？",
+     opts:["让一个 Skill 只负责一件事（单一职责）",
+           "把 description 写得又模糊又笼统",
+           "给 Skill 里带的脚本先审查再执行",
+           "把步骤写成可执行的清单"],
+     ans:1,
+     exp:"description 太模糊会导致漏用或误用；单一职责、清晰描述、脚本审查才是好实践。"}
+  ];
+  (function(){
+    const root=document.getElementById('quiz-skill');
+    const bar=document.createElement('div'); bar.className='qbar';
+    const scoreEl=document.createElement('span'); scoreEl.textContent='得分：0 / '+QA_SKILL.length;
+    const reset=document.createElement('button'); reset.className='reset'; reset.textContent='重置';
+    bar.appendChild(scoreEl); bar.appendChild(reset); root.appendChild(bar);
+    let score=0;
+    QA_SKILL.forEach((item, qi)=>{
+      const card=document.createElement('div'); card.className='q';
+      const qt=document.createElement('div'); qt.className='qt';
+      qt.innerHTML='<b>Q'+(qi+1)+'：</b>'+item.q; card.appendChild(qt);
+      const opts=document.createElement('div'); opts.className='opts';
+      const exp=document.createElement('div'); exp.className='exp'; exp.textContent='💡 '+item.exp;
+      let answered=false;
+      item.opts.forEach((o,oi)=>{
+        const b=document.createElement('button'); b.className='opt';
+        b.innerHTML='<span class="mk">'+(String.fromCharCode(65+oi))+'</span><span>'+o+'</span>';
+        b.onclick=function(){
+          if(answered) return; answered=true;
+          if(oi===item.ans){ b.classList.add('correct'); score++; }
+          else { b.classList.add('wrong'); opts.children[item.ans].classList.add('correct'); }
+          Array.from(opts.children).forEach((c,i)=>{ if(i!==item.ans) c.classList.add('dim'); c.disabled=true; });
+          scoreEl.textContent='得分：'+score+' / '+QA_SKILL.length;
+          exp.classList.add('show');
+        };
+        opts.appendChild(b);
+      });
+      card.appendChild(opts); card.appendChild(exp); root.appendChild(card);
+    });
+    reset.onclick=function(){ location.reload(); };
+  })();
+  </script>
+</div>
+
+<div class="card">
+  <h2><span class="n">7</span> 资料来源（可核查）</h2>
   <ol class="src">
     <li><span class="tag t-ok">已核验</span><a href="https://code.claude.com/docs/zh-CN/skills" target="_blank">Claude Code：使用 Skills 扩展 Claude（官方中文文档）</a> —— SKILL.md 写法、存放位置、frontmatter 规范（核验于 2026-09-06）</li>
     <li><span class="tag t-ok">已核验</span><a href="https://github.com/anthropics/skills" target="_blank">anthropics/skills（官方开源示例仓库）</a> —— Agent Skills 规范与大量可参考的真实技能示例（核验于 2026-09-06）</li>

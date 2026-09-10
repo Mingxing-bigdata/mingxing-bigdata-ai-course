@@ -67,6 +67,30 @@
   nav.links{margin-top:20px;text-align:center;font-size:13px}
   nav.links a{color:#4f46e5;text-decoration:none;font-weight:600;margin:0 8px}
   footer{text-align:center;margin-top:20px;color:var(--sub);font-size:12px}
+  /* —— 选择题测验（可视化交互）—— */
+  .quiz{margin-top:6px}
+  .qbar{display:flex;justify-content:space-between;align-items:center;gap:10px;
+    background:linear-gradient(135deg,#eef2ff,#f5f3ff);border:1px solid var(--line);
+    border-radius:12px;padding:10px 14px;font-weight:700;color:#4338ca}
+  .qbar .reset{cursor:pointer;font-size:12.5px;background:#fff;border:1px solid var(--pri);
+    color:var(--pri);border-radius:8px;padding:4px 12px;font-weight:700}
+  .q{background:#fafbff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0}
+  .q .qt{font-weight:700;font-size:14.5px;margin-bottom:9px}
+  .q .qt b{color:var(--pri)}
+  .opts{display:grid;gap:8px}
+  .opt{cursor:pointer;border:1px solid #c7cef0;background:#fff;border-radius:10px;padding:9px 13px;
+    font-size:14px;text-align:left;transition:.15s;display:flex;gap:9px;align-items:flex-start}
+  .opt:hover{border-color:var(--pri);background:#f3f5ff}
+  .opt .mk{font-weight:800;color:var(--sub);flex:none}
+  .opt.correct{background:#ecfdf5;border-color:var(--ok);color:#065f46}
+  .opt.correct .mk{color:var(--ok)}
+  .opt.wrong{background:#fef2f2;border-color:var(--bad);color:#991b1b}
+  .opt.wrong .mk{color:var(--bad)}
+  .opt:disabled{cursor:default}
+  .opt.dim{opacity:.55}
+  .exp{margin-top:9px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;
+    padding:9px 13px;font-size:13.5px;color:#92400e;display:none}
+  .exp.show{display:block}
 </style>
 </head>
 <body>
@@ -75,11 +99,11 @@
 <header>
   <span class="kicker">🧠 概念学习 · 由 concept-learner Skill 生成</span>
   <h1>概念：<span class="grad">Agent（智能体）</span></h1>
-  <div class="sub">学习目标 → 我的解释 → 核心机制 → 应用场景 → 易混淆与边界 → 自测 → 资料来源</div>
+  <div class="sub">学习目标 → 一句话理解 → 核心机制 → 应用场景 → 易混淆与边界 → 自测 → 选择题 → 资料来源</div>
   <div class="meta">
     <span class="pill">📅 2026-09-06</span>
     <span class="pill">📚 来源已核验</span>
-    <span class="pill">✅ 已个人化</span>
+    <span class="pill">🤖 AI 通俗版</span>
   </div>
 </header>
 
@@ -93,9 +117,9 @@
 </div>
 
 <div class="card">
-  <h2><span class="n">1</span> 我的解释（个人理解）</h2>
-  <div class="def">我觉得 Agent 就是个能自己跑流程干活的机器人：你给它一个目标，它会自己拆步骤、调工具、执行，中间发现不对还能自己调整，直到把事办成，不用人在旁边一步步盯着。</div>
-  <div class="note">✅ 以上为本人对概念的个人理解（已改写为自己的表达）。</div>
+  <h2><span class="n">1</span> 一句话通俗理解（AI 生成）</h2>
+  <div class="def">Agent（智能体）就像一个会自己想办法干活的“数字员工”。你只告诉它“目标是什么”，它自己会拆解成步骤、决定调用什么工具（查资料、写代码、调接口），做完再看结果对不对——不对就换个办法重来，直到把活干完。整个过程中你不需要在旁边一步步教它。</div>
+  <div class="note">🤖 以上为 AI 生成的通俗化解释（应作业要求，替换原“个人理解”版本）。</div>
 </div>
 
 <div class="card">
@@ -153,7 +177,82 @@
 </div>
 
 <div class="card">
-  <h2><span class="n">6</span> 资料来源（可核查）</h2>
+  <h2><span class="n">6</span> 选择题测验（点选项看解析）</h2>
+  <div class="quiz" id="quiz-agent"></div>
+  <script>
+  const QA_AGENT = [
+    {q:"Agent 与“只会聊天的机器人”最本质的区别是什么？",
+     opts:["它能一口气生成更长的回答",
+           "它形成了“规划 → 调用工具 → 观察结果 → 继续行动”的自主闭环",
+           "它背后用的是参数量更大的模型",
+           "它可以同时和很多人聊天"],
+     ans:1,
+     exp:"聊天式大模型只做“你说我答”的文本往返；Agent 的关键是“行动闭环”——能调用外部工具并基于返回结果继续推理。会多轮对话 ≠ Agent。"},
+    {q:"一个数据分析 Agent 接到“找出本月销售额异常的省份并画图”的任务，它最可能怎么做？",
+     opts:["凭记忆编一份数据直接返回",
+           "先把目标拆成步骤，再用 Python 跑统计、画图，发现数据缺失后先修正再继续",
+           "把问题原样丢给另一个用户去解决",
+           "只回一句“这个我不会”"],
+     ans:1,
+     exp:"这正是 Agent 区别于普通聊天的体现：规划 → 调用工具（pandas/matplotlib）→ 观察结果 → 发现缺失则自我修正，直到产出异常省份 + 原因 + 图表。"},
+    {q:"如果把 Agent 的“工具（Tools）”拿掉，它会退化成什么？",
+     opts:["一个更快的搜索引擎",
+           "一个“只会说、不会做”的对话模型",
+           "一整套完整的小程序",
+           "和原来完全一样"],
+     ans:1,
+     exp:"工具是 Agent 的“手脚 / 设备”。没了工具，它只剩理解与生成能力，有目标却没执行力。"},
+    {q:"下面哪种任务“不太适合”用 Agent 来做？",
+     opts:["探索一个陌生网站并汇总关键信息",
+           "每周固定、步骤完全写死的报表生成",
+           "根据反馈反复修改一份推广文案",
+           "依次调用多个 API 完成一笔下单"],
+     ans:1,
+     exp:"确定性、步骤固定的流程用固定脚本 / 工作流更稳、更省成本；Agent 适合开放式、需要模型自主决策的任务。"},
+    {q:"为什么说使用 Agent 要警惕它的“不可预测性”？",
+     opts:["因为它一定会算错",
+           "因为执行路径由模型自己决定，同样的输入可能走不同分支",
+           "因为它不能联网",
+           "因为它文件太大跑不动"],
+     ans:1,
+     exp:"Agent 的代价是路径不可控，所以要对工具做接口约束、过程保持透明、关键节点加人审来兜底。"}
+  ];
+  (function(){
+    const root=document.getElementById('quiz-agent');
+    const bar=document.createElement('div'); bar.className='qbar';
+    const scoreEl=document.createElement('span'); scoreEl.textContent='得分：0 / '+QA_AGENT.length;
+    const reset=document.createElement('button'); reset.className='reset'; reset.textContent='重置';
+    bar.appendChild(scoreEl); bar.appendChild(reset); root.appendChild(bar);
+    let score=0;
+    QA_AGENT.forEach((item, qi)=>{
+      const card=document.createElement('div'); card.className='q';
+      const qt=document.createElement('div'); qt.className='qt';
+      qt.innerHTML='<b>Q'+(qi+1)+'：</b>'+item.q; card.appendChild(qt);
+      const opts=document.createElement('div'); opts.className='opts';
+      const exp=document.createElement('div'); exp.className='exp'; exp.textContent='💡 '+item.exp;
+      let answered=false;
+      item.opts.forEach((o,oi)=>{
+        const b=document.createElement('button'); b.className='opt';
+        b.innerHTML='<span class="mk">'+(String.fromCharCode(65+oi))+'</span><span>'+o+'</span>';
+        b.onclick=function(){
+          if(answered) return; answered=true;
+          if(oi===item.ans){ b.classList.add('correct'); score++; }
+          else { b.classList.add('wrong'); opts.children[item.ans].classList.add('correct'); }
+          Array.from(opts.children).forEach((c,i)=>{ if(i!==item.ans) c.classList.add('dim'); c.disabled=true; });
+          scoreEl.textContent='得分：'+score+' / '+QA_AGENT.length;
+          exp.classList.add('show');
+        };
+        opts.appendChild(b);
+      });
+      card.appendChild(opts); card.appendChild(exp); root.appendChild(card);
+    });
+    reset.onclick=function(){ location.reload(); };
+  })();
+  </script>
+</div>
+
+<div class="card">
+  <h2><span class="n">7</span> 资料来源（可核查）</h2>
   <ol class="src">
     <li><span class="tag t-ok">已核验</span><a href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank">Anthropic：Building Effective AI Agents</a> —— 官方工程实践：工作流 vs Agent、三大设计原则（核验于 2026-09-06）</li>
     <li><span class="tag t-ok">已核验</span><a href="https://lilianweng.github.io/posts/2023-06-23-agent/" target="_blank">Lilian Weng：LLM Powered Autonomous Agents</a> —— 经典长文：规划/记忆/工具三大组件（核验于 2026-09-06）</li>
