@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>概念学习 · Agent 的记忆系统</title>
+<style>
+  :root{
+    --bg:#f4f5fb; --card:#fff; --ink:#1b2130; --sub:#5d6678;
+    --pri:#4f46e5; --pri2:#9333ea; --line:#e5e8f2;
+    --ok:#10b981; --bad:#ef4444; --chip:#eef1ff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+    background:linear-gradient(165deg,#eaeefc 0%,var(--bg) 45%);color:var(--ink);
+    line-height:1.75;padding:26px 14px 70px}
+  .wrap{max-width:860px;margin:0 auto}
+  header{text-align:center;padding:8px 8px 2px}
+  .kicker{display:inline-flex;gap:8px;align-items:center;background:var(--chip);color:var(--pri);
+    font-weight:700;padding:6px 15px;border-radius:999px;font-size:13px}
+  h1{font-size:30px;margin:14px 0 6px;letter-spacing:.4px}
+  .grad{background:linear-gradient(90deg,#4f46e5,#9333ea,#0ea5e9);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--sub);font-size:14.5px}
+  .meta{margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .pill{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 13px;
+    font-size:12.5px;font-weight:600}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:20px 24px;margin-top:16px;box-shadow:0 5px 18px rgba(20,30,80,.05)}
+  .card>h2{font-size:18px;color:#4338ca;display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .card>h2 .n{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;min-width:27px;
+    height:27px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;
+    font-size:13px;flex:none}
+  p.sec{margin:8px 0;font-size:15px}
+  ul,ol{margin:8px 0 8px 22px;font-size:14.5px}
+  li{margin:5px 0}
+  .def{background:linear-gradient(135deg,#f4f3ff,#eef7ff);border-left:4px solid var(--pri);
+    padding:12px 16px;border-radius:0 12px 12px 0;font-size:15.5px;font-weight:700;margin:10px 0}
+  .note{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:10px;
+    padding:9px 14px;font-size:13px;margin:8px 0}
+  .g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:11px;margin-top:10px}
+  .mini{background:#fafbff;border:1px dashed #ccd3ec;border-radius:12px;padding:10px 13px}
+  .mini b{display:block;color:#4338ca;font-size:13.5px;margin-bottom:2px}
+  .mini span{font-size:12.5px;color:var(--sub)}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+  th,td{border:1px solid var(--line);padding:7px 11px;text-align:left;vertical-align:top}
+  th{background:#f1f2ff;color:#4338ca}
+  code{font-family:Consolas,"JetBrains Mono",monospace;background:#eef0f9;border-radius:5px;
+    padding:1px 6px;font-size:.9em;color:#5b21b6}
+  details{background:#fafbff;border:1px solid var(--line);border-radius:12px;padding:8px 14px;
+    margin:8px 0;font-size:14px}
+  summary{cursor:pointer;font-weight:700;color:#4338ca}
+  details .ans{margin-top:6px;padding-top:6px;border-top:1px dashed var(--line);color:var(--sub);
+    font-size:13.5px}
+  .src{list-style:none;margin-top:6px}
+  .src li{background:#fbfbff;border:1px solid var(--line);border-radius:10px;padding:8px 13px;
+    margin:6px 0;font-size:13.5px}
+  .src a{color:#4f46e5;text-decoration:none;font-weight:600;word-break:break-all}
+  .src a:hover{text-decoration:underline}
+  .tag{display:inline-block;font-size:11px;font-weight:700;color:#fff;border-radius:5px;
+    padding:1px 8px;margin-right:8px}
+  .t-ok{background:#059669}
+  nav.links{margin-top:20px;text-align:center;font-size:13px}
+  nav.links a{color:#4f46e5;text-decoration:none;font-weight:600;margin:0 8px}
+  footer{text-align:center;margin-top:20px;color:var(--sub);font-size:12px}
+  /* —— 记忆系统架构图（纯 CSS 可视化）—— */
+  .mem{background:#141a2e;border-radius:16px;padding:18px;margin:12px 0;overflow-x:auto}
+  .mem .row{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap;margin:8px 0}
+  .mem .box{border-radius:10px;padding:9px 13px;font-size:13px;color:#fff;text-align:center;min-width:118px}
+  .mem .box b{display:block;font-size:13.5px}
+  .mem .box small{display:block;opacity:.85;font-weight:400;font-size:11.5px}
+  .mem .b1{background:#0ea5e9}.mem .b2{background:#4f46e5}.mem .b3{background:#7c3aed}
+  .mem .arr{color:#a78bfa;font-weight:800;font-size:15px}
+  .mem .chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .mem .chip{background:rgba(255,255,255,.12);border-radius:8px;font-size:12px;color:#e9d5ff;padding:5px 10px}
+  .mem .note2{color:#8b93b8;font-size:11.5px;text-align:center;margin-top:6px}
+  /* —— 选择题测验（可视化交互）—— */
+  .quiz{margin-top:6px}
+  .qbar{display:flex;justify-content:space-between;align-items:center;gap:10px;
+    background:linear-gradient(135deg,#eef2ff,#f5f3ff);border:1px solid var(--line);
+    border-radius:12px;padding:10px 14px;font-weight:700;color:#4338ca}
+  .qbar .reset{cursor:pointer;font-size:12.5px;background:#fff;border:1px solid var(--pri);
+    color:var(--pri);border-radius:8px;padding:4px 12px;font-weight:700}
+  .q{background:#fafbff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0}
+  .q .qt{font-weight:700;font-size:14.5px;margin-bottom:9px}
+  .q .qt b{color:var(--pri)}
+  .opts{display:grid;gap:8px}
+  .opt{cursor:pointer;border:1px solid #c7cef0;background:#fff;border-radius:10px;padding:9px 13px;
+    font-size:14px;text-align:left;transition:.15s;display:flex;gap:9px;align-items:flex-start}
+  .opt:hover{border-color:var(--pri);background:#f3f5ff}
+  .opt .mk{font-weight:800;color:var(--sub);flex:none}
+  .opt.correct{background:#ecfdf5;border-color:var(--ok);color:#065f46}
+  .opt.correct .mk{color:var(--ok)}
+  .opt.wrong{background:#fef2f2;border-color:var(--bad);color:#991b1b}
+  .opt.wrong .mk{color:var(--bad)}
+  .opt:disabled{cursor:default}
+  .opt.dim{opacity:.55}
+  .exp{margin-top:9px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;
+    padding:9px 13px;font-size:13.5px;color:#92400e;display:none}
+  .exp.show{display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <span class="kicker">🧠 概念学习 · 由 concept-learner Skill 生成</span>
+  <h1>概念：<span class="grad">Agent 的记忆系统</span></h1>
+  <div class="sub">学习目标 → 一句话理解 → 核心机制 → 应用场景 → 易混淆与边界 → 自测 → 选择题 → 资料来源</div>
+  <div class="meta">
+    <span class="pill">📅 2026-09-10</span>
+    <span class="pill">📚 来源已核验</span>
+    <span class="pill">🤖 AI 通俗版</span>
+  </div>
+</header>
+
+<div class="card">
+  <h2><span class="n">0</span> 学习目标</h2>
+  <ul>
+    <li>能说清 Agent 的“记忆”到底是什么，短期 / 长期 / 参数记忆分别指什么</li>
+    <li>能列出记忆系统的三类长期记忆与四个操作（写入 / 检索 / 反思 / 遗忘）</li>
+    <li>能解释：为什么 Agent 需要记忆、记忆的代价，以及记忆与 RAG / 上下文窗口的关系</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2><span class="n">1</span> 一句话通俗理解（AI 生成）</h2>
+  <div class="def">Agent 的记忆系统，就是让它“记得住事”的抽屉柜：聊天窗口太小、一关就忘，所以 Agent 把重要的信息存到外部（笔记、数据库、向量库），下次需要时再翻出来用。短期记忆＝当前这轮对话；长期记忆＝跨天跨任务还留着的外部档案；参数记忆＝模型训练时就背进脑子里的通用知识。</div>
+</div>
+
+<div class="card">
+  <h2><span class="n">2</span> 核心机制 / 组成</h2>
+  <div class="mem">
+    <div class="row">
+      <div class="box b1"><b>用户 / 任务</b></div>
+      <span class="arr">→</span>
+      <div class="box b2"><b>短期记忆</b><small>上下文窗口</small></div>
+      <span class="arr">⇄</span>
+      <div class="box b3"><b>长期记忆</b><small>外部存储</small></div>
+    </div>
+    <div class="row">
+      <div class="chips">
+        <div class="chip">语义记忆：事实 / 知识（向量库 · RAG）</div>
+        <div class="chip">情景记忆：发生过的事件（日志 · 反思缓冲）</div>
+        <div class="chip">程序记忆：怎么做某类事（Skill · 操作手册）</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="chips">
+        <div class="chip">① 写入 Write</div>
+        <div class="chip">② 检索 Retrieve</div>
+        <div class="chip">③ 反思 Reflect</div>
+        <div class="chip">④ 遗忘 Forget / Decay</div>
+      </div>
+    </div>
+    <div class="note2">短期记忆随会话清空；长期记忆跨会话持久，靠“检索”回填上下文后再推理。</div>
+  </div>
+  <div class="g2">
+    <div class="mini"><b>🧩 短期记忆（Working）</b><span>就是当前上下文窗口，容量有限、会话结束即清；Agent 能“想起来”的只有它装下的内容。</span></div>
+    <div class="mini"><b>🗄 长期记忆（Long-term）</b><span>外部存储：语义（知识）、情景（事件）、程序（做法），可跨会话持久化。</span></div>
+    <div class="mini"><b>⚙️ 参数记忆（Parametric）</b><span>训练时写进模型权重的一般知识；记不住你个人的新经历。</span></div>
+    <div class="mini"><b>🔁 四个操作</b><span>写入 → 检索 → 反思（压缩/提炼）→ 遗忘（衰减/清理），构成完整闭环。</span></div>
+  </div>
+  <p class="sec">检索机制举例：Generative Agents 用“最近度 + 重要度 + 相关度”三要素给记忆打分，再取最相关片段喂回上下文；MemoryBank 则给每条记忆维护重要性并随时间衰减。</p>
+</div>
+
+<div class="card">
+  <h2><span class="n">3</span> 一个具体应用场景</h2>
+  <p class="sec"><b>AI 长期陪伴 / 心理咨询助手（灵感来自 MemoryBank 的 SiliconFriend）。</b></p>
+  <ol>
+    <li><b>第一次聊天</b>：它知道你“怕狗、喜欢猫”，并把这条个人信息<strong>写入</strong>长期记忆；</li>
+    <li><b>之后的某天</b>：对话开始时自动<strong>检索</strong>到这条记忆，主动不提狗、多聊猫；</li>
+    <li><b>长期互动后</b>：把零散观察<strong>反思</strong>成“用户偏安静型陪伴”，个性画像逐步进化；</li>
+    <li><b>无关信息</b>：过时的临时话题被<strong>遗忘 / 衰减</strong>，避免噪声挤占上下文。</li>
+  </ol>
+  <p class="sec">没有记忆系统，它每次都像“第一次见你”——这正是记忆让 Agent 从“工具”变“搭档”的关键。</p>
+</div>
+
+<div class="card">
+  <h2><span class="n">4</span> 易混淆与使用边界</h2>
+  <table>
+    <tr><th>对比对象</th><th>关键区别</th></tr>
+    <tr><td>vs 上下文窗口（短期记忆）</td><td>上下文是一次性“临时工作台”，会话结束即消失；记忆是<strong>外部、可持久</strong>的存储，靠检索回填上下文。</td></tr>
+    <tr><td>vs RAG 检索增强</td><td>RAG 只是记忆系统的“读取”手段之一（语义记忆）；完整记忆还包含<strong>写入、反思、遗忘</strong>。</td></tr>
+    <tr><td>vs 模型参数（参数记忆）</td><td>参数里是训练时学的通用知识，<strong>记不住你个人的新经历</strong>；长期记忆存的是个性化、时效性信息。</td></tr>
+  </table>
+  <p class="sec"><b>不该做的事</b>：把不该长期留存的隐私塞进记忆；不分重要性地<strong>全量存储</strong>（会撑爆存储、检索变慢、噪声拉低质量）；不检索就硬塞；不做反思压缩导致记忆越积越乱。</p>
+</div>
+
+<div class="card">
+  <h2><span class="n">5</span> 自测问题（先想再点开）</h2>
+  <details><summary>Q1：Agent 的“短期记忆”通常对应什么？</summary>
+    <div class="ans">当前上下文窗口（context）：容量有限、会话结束即清空；跨轮“记住”其实是调用方把历史重新放回窗口。</div></details>
+  <details><summary>Q2：Generative Agents 里的“反思（reflection）”起什么作用？</summary>
+    <div class="ans">把零散观察压缩、提炼成高层结论，提升后续检索相关性与决策质量——是记忆系统的“反思”环节。</div></details>
+  <details><summary>Q3：情景记忆 vs 语义记忆？</summary>
+    <div class="ans">情景记忆＝发生过的事件 / 经历（如“上次任务失败的原因”）；语义记忆＝事实与知识（如“巴黎是法国首都”）。</div></details>
+  <details><summary>Q4：为什么不能把全部历史无脑写进长期记忆？</summary>
+    <div class="ans">会撑爆存储、检索变慢，且无关噪声挤占上下文、拉低答案质量；需要取舍 + 反思压缩 + 遗忘机制。</div></details>
+</div>
+
+<div class="card">
+  <h2><span class="n">6</span> 选择题测验（点选项看解析）</h2>
+  <div class="quiz" id="quiz-memory"></div>
+  <script>
+  const QA_MEMORY = [
+    {q:"Agent 的“短期记忆”最接近下面哪一项？",
+     opts:["模型训练时学进参数的知识",
+           "当前这一轮对话的上下文窗口",
+           "放在硬盘上的个人笔记文件",
+           "一个外部向量数据库"],
+     ans:1,
+     exp:"短期记忆就是模型单次调用能看到的上下文窗口，容量有限、会话结束即清空；C/D 是长期记忆，A 是参数记忆。"},
+    {q:"下面哪个属于 Agent“长期记忆”的写入动作？",
+     opts:["把用户刚说的话直接放进当前 prompt",
+           "把一次任务失败后总结的教训存进外部记忆库，下次复用",
+           "增大模型的参数量",
+           "直接关掉对话窗口"],
+     ans:1,
+     exp:"长期记忆是跨会话持久化的外部存储；把教训写入记忆库（如 Reflexion 的 episodic buffer）正是“写记忆”。"},
+    {q:"给一个 AI 陪聊助手加上“长期记忆”后，它最可能获得什么能力？",
+     opts:["回答速度变快十倍",
+           "跨天记住“你怕狗、喜欢猫”这类个人信息",
+           "自动学会一门新语言",
+           "不再需要大模型"],
+     ans:1,
+     exp:"长期记忆让 Agent 跨会话保留个性化、时效性信息（如 MemoryBank 的 SiliconFriend），实现“记得你是谁”。"},
+    {q:"“检索增强（RAG）”在记忆系统里主要对应哪个环节？",
+     opts:["写入（Write）",
+           "读取 / 检索（Retrieve）",
+           "反思（Reflect）",
+           "遗忘（Forget）"],
+     ans:1,
+     exp:"RAG 是从长期记忆里取回最相关片段喂给上下文，属于“读取”；写入 / 反思 / 遗忘是记忆系统的其他环节。"},
+    {q:"关于记忆系统，下面哪句是对的？",
+     opts:["上下文窗口再大，也完全不需要任何外部记忆",
+           "把所有历史无脑全存，检索效果一定最好",
+           "记忆要配合“写入-检索-反思-遗忘”才完整，且需做相关性取舍",
+           "记忆只存在于模型参数里"],
+     ans:2,
+     exp:"窗口再大也有上限，且长期记忆解决的是跨会话 / 个性化；全量存储会引入噪声、拉低检索质量；完整记忆系统含写入-检索-反思-遗忘，并要做相关性取舍。"}
+  ];
+  (function(){
+    const root=document.getElementById('quiz-memory');
+    const bar=document.createElement('div'); bar.className='qbar';
+    const scoreEl=document.createElement('span'); scoreEl.textContent='得分：0 / '+QA_MEMORY.length;
+    const reset=document.createElement('button'); reset.className='reset'; reset.textContent='重置';
+    bar.appendChild(scoreEl); bar.appendChild(reset); root.appendChild(bar);
+    let score=0;
+    QA_MEMORY.forEach((item, qi)=>{
+      const card=document.createElement('div'); card.className='q';
+      const qt=document.createElement('div'); qt.className='qt';
+      qt.innerHTML='<b>Q'+(qi+1)+'：</b>'+item.q; card.appendChild(qt);
+      const opts=document.createElement('div'); opts.className='opts';
+      const exp=document.createElement('div'); exp.className='exp'; exp.textContent='💡 '+item.exp;
+      let answered=false;
+      item.opts.forEach((o,oi)=>{
+        const b=document.createElement('button'); b.className='opt';
+        b.innerHTML='<span class="mk">'+(String.fromCharCode(65+oi))+'</span><span>'+o+'</span>';
+        b.onclick=function(){
+          if(answered) return; answered=true;
+          if(oi===item.ans){ b.classList.add('correct'); score++; }
+          else { b.classList.add('wrong'); opts.children[item.ans].classList.add('correct'); }
+          Array.from(opts.children).forEach((c,i)=>{ if(i!==item.ans) c.classList.add('dim'); c.disabled=true; });
+          scoreEl.textContent='得分：'+score+' / '+QA_MEMORY.length;
+          exp.classList.add('show');
+        };
+        opts.appendChild(b);
+      });
+      card.appendChild(opts); card.appendChild(exp); root.appendChild(card);
+    });
+    reset.onclick=function(){ location.reload(); };
+  })();
+  </script>
+</div>
+
+<div class="card">
+  <h2><span class="n">7</span> 资料来源（可核查）</h2>
+  <ol class="src">
+    <li><span class="tag t-ok">已核验</span><a href="https://arxiv.org/abs/2304.03442" target="_blank">Park J.S., et al. Generative Agents: Interactive Simulacra of Human Behavior. UIST 2023.</a> —— 提出 memory stream（记忆流）与 reflection（反思）机制，是 Agent 记忆架构的代表工作（核验于 2026-09-10）</li>
+    <li><span class="tag t-ok">已核验</span><a href="https://arxiv.org/abs/2303.11366" target="_blank">Shinn N., et al. Reflexion: Language Agents with Verbal Reinforcement Learning. arXiv:2303.11366, 2023.</a> —— 以 episodic memory buffer（情景记忆缓冲）让 Agent 从失败中反思复用（核验于 2026-09-10）</li>
+    <li><span class="tag t-ok">已核验</span><a href="https://arxiv.org/abs/2305.10250" target="_blank">Zhong W., et al. MemoryBank: Enhancing LLMs with Long-Term Memory. arXiv:2305.10250, 2023.</a> —— 长期记忆机制 + 重要性衰减，并构建跨会话陪伴机器人 SiliconFriend（核验于 2026-09-10）</li>
+    <li><span class="tag t-ok">已核验</span><a href="https://arxiv.org/abs/2305.14322" target="_blank">Modarressi A., et al. RET-LLM: Towards a General Read-Write Memory for LLMs. arXiv:2305.14322, 2023.</a> —— 为 LLM 引入通用读写记忆单元，以三元组形式抽取/存储/召回知识（核验于 2026-09-10）</li>
+    <li><span class="tag t-ok">已核验</span><a href="https://arxiv.org/abs/2308.11432" target="_blank">Wang L., et al. A Survey on Large Language Model based Autonomous Agents. arXiv:2308.11432, 2023.</a> —— 系统综述，含 Agent 记忆（Memory）模块的分类与综述（核验于 2026-09-10）</li>
+  </ol>
+</div>
+
+<nav class="links">
+  <a href="agent.html">← Agent</a> ·
+  <a href="llm-context.html">大模型的上下文</a> ·
+  <a href="skill.html">Skill</a> ·
+  <a href="concept-relationship.html">三概念关系</a>
+</nav>
+<footer>concept-learner · 大数据与人工智能课程</footer>
+</div>
+</body>
+</html>
