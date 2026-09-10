@@ -61,6 +61,15 @@
   nav.links{margin-top:20px;text-align:center;font-size:13px}
   nav.links a{color:#4f46e5;text-decoration:none;font-weight:600;margin:0 8px}
   footer{text-align:center;margin-top:20px;color:var(--sub);font-size:12px}
+  /* 资料来源 */
+  .src{list-style:none;margin-top:6px}
+  .src li{background:#fbfbff;border:1px solid var(--line);border-radius:10px;padding:8px 13px;
+    margin:6px 0;font-size:13.5px}
+  .src a{color:#4f46e5;text-decoration:none;font-weight:600;word-break:break-all}
+  .src a:hover{text-decoration:underline}
+  .tag{display:inline-block;font-size:11px;font-weight:700;color:#fff;border-radius:5px;
+    padding:1px 8px;margin-right:8px}
+  .t-ok{background:#059669}
 </style>
 </head>
 <body>
@@ -144,6 +153,18 @@
     <li>模型按流程产出结构化学习卡 → 任务完成；本次 <b>Context</b> 作废，但 <b>Skill</b> 仍在仓库，下次学“YY 概念”可再次加载。</li>
   </ol>
   <p class="sec">这正是本仓库 learning-materials/ 三份资料的生成方式：<b>一个 Skill 一次设计，套用三个概念</b>。</p>
+</div>
+
+<div class="card">
+  <h2><span class="n">7</span> 资料来源（可核查）</h2>
+  <ol class="src">
+    <li><span class="tag t-ok">已核验</span><a href="https://arxiv.org/abs/2210.03629" target="_blank">Yao S., et al. ReAct: Synergizing Reasoning and Acting in Language Models. ICLR 2023.</a> —— Agent 推理-行动闭环与工具调用（核验于 2026-09-10）</li>
+    <li><span class="tag t-ok">已核验</span><a href="https://arxiv.org/abs/2308.11432" target="_blank">Wang L., et al. A Survey on Large Language Model based Autonomous Agents. arXiv:2308.11432, 2023.</a> —— Agent、规划、记忆、工具使用的系统综述（核验于 2026-09-10）</li>
+    <li><span class="tag t-ok">已核验</span><a href="https://arxiv.org/abs/1706.03762" target="_blank">Vaswani A., et al. Attention Is All You Need. NeurIPS 2017.</a> —— Transformer 自注意力与上下文表示机制（核验于 2026-09-10）</li>
+    <li><span class="tag t-ok">已核验</span><a href="https://arxiv.org/abs/2005.14165" target="_blank">Brown T.B., et al. Language Models are Few-Shot Learners. NeurIPS 2020.</a> —— 上下文学习与任务特化（核验于 2026-09-10）</li>
+    <li><span class="tag t-ok">已核验</span><a href="https://arxiv.org/abs/2302.04761" target="_blank">Schick T., et al. Toolformer: Language Models Can Teach Themselves to Use Tools. arXiv:2302.04761, 2023.</a> —— 语言模型通过工具/技能扩展能力（核验于 2026-09-10）</li>
+    <li><span class="tag t-ok">已核验</span><a href="https://arxiv.org/abs/2201.11903" target="_blank">Wei J., et al. Chain-of-Thought Prompting Elicits Reasoning in Large Language Models. NeurIPS 2022.</a> —— 上下文示例形式对推理质量的影响（核验于 2026-09-10）</li>
+  </ol>
 </div>
 
 <nav class="links">
